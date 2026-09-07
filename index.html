@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+(function(){
+  // Theme so früh wie möglich setzen, bevor irgendetwas gemalt wird — verhindert
+  // ein kurzes Aufblitzen des falschen Modus beim Laden.
+  try {
+    var saved = localStorage.getItem("mvb-theme");
+    if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved);
+  } catch(e){}
+})();
+</script>
+<title>Marktvergleich Bernhausen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#f3f1fc;
+    --surface:#ffffff;
+    --surface-2:#eeeafd;
+    --ink:#1d1a30;
+    --ink-muted:#6f6b8c;
+    --line:#e5e1f7;
+    --accent:#5850c9;
+    --accent-2:#6f63d8;
+    --accent-3:#8f85e0;
+    --accent-dark:#433cab;
+    --accent-contrast:#ffffff;
+    --accent-soft:#edecfa;
+    --rose:#f43f5e;
+    --rose-bg:#fde6ea;
+    --rose-ink:#b8264a;
+    --danger:#dc2626;
+    --danger-bg:#fbe6e4;
+    --green:#1f9d5c;
+    --green-bg:#e2f6ea;
+    --green-ink:#166a3f;
+    --store-rewe:#ff5a63;
+    --store-aldi:#3b82f6;
+    --store-lidl:#e8a11c;
+    --shadow:0 1px 2px rgba(30,20,80,.06), 0 20px 40px -22px rgba(76,45,220,.35);
+    --shadow-hover:0 1px 2px rgba(30,20,80,.08), 0 26px 46px -18px rgba(76,45,220,.42);
+    --radius:22px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#100e24;
+      --surface:#1b1738;
+      --surface-2:#241f4a;
+      --ink:#f1eefc;
+      --ink-muted:#a29cc9;
+      --line:#332c5e;
+      --accent:#948bea;
+      --accent-2:#7d73de;
+      --accent-3:#aca4ec;
+      --accent-dark:#6f65d0;
+      --accent-contrast:#171233;
+      --accent-soft:#28234f;
+      --rose:#fb7185;
+      --rose-bg:#3a2230;
+      --rose-ink:#fbb3c2;
+      --danger:#f2948d;
+      --danger-bg:#3a2422;
+      --green:#6fcf97;
+      --green-bg:#1f3a2b;
+      --green-ink:#8fe0ae;
+      --store-rewe:#ff9498;
+      --store-aldi:#7db1ff;
+      --store-lidl:#ffcf6b;
+      --shadow:0 1px 2px rgba(0,0,0,.5), 0 20px 40px -20px rgba(0,0,0,.65);
+      --shadow-hover:0 1px 2px rgba(0,0,0,.55), 0 26px 46px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#100e24;
+    --surface:#1b1738;
+    --surface-2:#241f4a;
+    --ink:#f1eefc;
+    --ink-muted:#a29cc9;
+    --line:#332c5e;
+    --accent:#a78bfa;
+    --accent-2:#8b5cf6;
+    --accent-3:#c4b5fd;
+    --accent-dark:#7c5cf0;
+    --accent-contrast:#171233;
+    --accent-soft:#2c2560;
+    --rose:#fb7185;
+    --rose-bg:#3a2230;
+    --rose-ink:#fbb3c2;
+    --danger:#f2948d;
+    --danger-bg:#3a2422;
+    --green:#6fcf97;
+    --green-bg:#1f3a2b;
+    --green-ink:#8fe0ae;
+    --store-rewe:#ff9498;
+    --store-aldi:#7db1ff;
+    --store-lidl:#ffcf6b;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 20px 40px -20px rgba(0,0,0,.65);
+    --shadow-hover:0 1px 2px rgba(0,0,0,.55), 0 26px 46px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Manrope', system-ui, sans-serif;
+    text-wrap:balance;
+    margin:0;
+  }
+  .mono{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  button{font-family:inherit;}
+  a{color:var(--accent-dark);}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  /* ---------- hero (balance-card style) ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    max-width:640px; margin:14px auto 0; padding:0 20px;
+  }
+  .hero-card{
+    position:relative; overflow:hidden;
+    border-radius:28px;
+    background:linear-gradient(150deg, var(--accent) 0%, var(--accent-2) 100%);
+    padding:26px 24px 60px;
+    color:#fff;
+    box-shadow:0 24px 50px -22px rgba(76,45,220,.55);
+  }
+  .hero-decor{position:absolute; inset:0; pointer-events:none;}
+  .hero-decor::before, .hero-decor::after{
+    content:""; position:absolute; border-radius:50%;
+  }
+  .hero-decor::before{width:230px; height:230px; background:rgba(255,255,255,.14); top:-100px; right:-60px;}
+  .hero-decor::after{width:170px; height:170px; background:rgba(255,255,255,.10); bottom:-90px; left:-50px;}
+  .theme-toggle{
+    position:absolute; top:18px; right:18px; z-index:2;
+    width:38px; height:38px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(255,255,255,.22); backdrop-filter:blur(6px);
+    color:#fff; font-size:1rem; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,.34);}
+  .hero-inner{position:relative; z-index:1;}
+  .hero-eyebrow{
+    display:block; font-size:.76rem; font-weight:700; letter-spacing:.05em;
+    text-transform:uppercase; opacity:.85; margin-bottom:6px;
+  }
+  .hero h1{font-size:1.9rem; font-weight:800; letter-spacing:-.01em;}
+  .hero .place{
+    display:block; margin-top:4px; font-size:.83rem; font-weight:600; opacity:.9;
+  }
+  .hero-stat{display:flex; align-items:baseline; gap:10px; margin-top:20px;}
+  .hero-stat-value{font-size:2.5rem; font-weight:700; line-height:1;}
+  .hero-stat-label{font-size:.83rem; font-weight:600; opacity:.88;}
+  .hero-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
+  .hero-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,.2); backdrop-filter:blur(2px);
+    border-radius:999px; padding:6px 13px; font-size:.76rem; font-weight:600; color:#fff;
+  }
+  .hero-chip .dot{width:6px;height:6px;border-radius:50%;background:#fff;flex:none;}
+  .hero-chip-watch{background:rgba(255,255,255,.32); font-weight:700;}
+  .hero-build{display:block; margin-top:12px; font-size:.65rem; opacity:.55;}
+
+  /* ---------- tab bar (floating pill) ---------- */
+  .tabbar-wrap{
+    position:sticky; top:12px; z-index:5;
+    max-width:600px; margin:-34px auto 0; padding:0 20px;
+  }
+  nav#tabs{
+    display:flex; gap:3px;
+    background:var(--surface); border-radius:999px; box-shadow:var(--shadow);
+    padding:5px; overflow-x:auto;
+  }
+  nav#tabs button{
+    flex:1 1 auto; white-space:nowrap;
+    border:none; background:transparent; color:var(--ink-muted);
+    font-size:.83rem; font-weight:700; padding:10px 14px;
+    border-radius:999px; cursor:pointer;
+  }
+  nav#tabs button:hover{color:var(--ink);}
+  nav#tabs button[aria-selected="true"]{
+    color:var(--accent-contrast); background:var(--accent);
+  }
+
+  main{max-width:1040px; margin:0 auto; padding:26px 20px 60px;}
+  [hidden]{display:none !important;}
+
+  /* ---------- shared bits ---------- */
+  .panel-intro{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    gap:10px; margin-bottom:16px;
+  }
+  .panel-intro .summary{font-size:.85rem; color:var(--ink-muted);}
+  .offers-controls{margin-bottom:14px; position:relative;}
+  .controls-row{display:flex; gap:8px; align-items:center;}
+  .search-box{
+    display:block; flex:1 1 auto; min-width:0; box-sizing:border-box;
+    border:1.5px solid var(--line); border-radius:999px; background:var(--surface);
+    padding:9px 16px; font-size:.85rem; color:var(--ink); font-family:inherit;
+    -webkit-appearance:none; appearance:none;
+  }
+  .search-box:focus{outline:none; border-color:var(--accent);}
+  .filter-toggle{
+    display:inline-flex; align-items:center; gap:6px; flex:none;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--ink);
+    border-radius:999px; padding:9px 16px; font-size:.83rem; font-weight:700; cursor:pointer;
+  }
+  .filter-toggle:hover{border-color:var(--accent); color:var(--accent-dark);}
+  .filter-toggle[aria-expanded="true"]{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .filter-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:18px; height:18px; padding:0 5px; border-radius:999px;
+    background:var(--rose); color:#fff; font-size:.68rem; font-weight:700;
+  }
+  .filter-toggle[aria-expanded="true"] .filter-badge{background:#fff; color:var(--accent-dark);}
+  .filter-panel{
+    margin-top:10px; padding:16px; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .filter-group{display:flex; flex-direction:column; gap:8px;}
+  .filter-group-label{
+    font-size:.7rem; font-weight:700; color:var(--ink-muted);
+    text-transform:uppercase; letter-spacing:.04em;
+  }
+  .filter-group-row{
+    flex-direction:row; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  .filter-reset-btn{
+    border:none; background:none; color:var(--accent-dark); font-size:.78rem; font-weight:700;
+    cursor:pointer; padding:4px 2px;
+  }
+  .filter-reset-btn:hover{text-decoration:underline;}
+  .store-filter, .category-filter{
+    display:flex; gap:7px; flex-wrap:wrap;
+  }
+  .store-filter button, .category-filter button{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--ink-muted);
+    border-radius:999px; padding:7px 15px 7px 12px; font-size:.8rem; font-weight:700;
+    cursor:pointer;
+  }
+  .store-filter button:hover, .category-filter button:hover{border-color:var(--accent); color:var(--ink);}
+  .store-filter button .store-dot{width:8px; height:8px;}
+  .store-filter button[aria-pressed="true"], .category-filter button[aria-pressed="true"]{
+    background:var(--fs-color, var(--accent)); border-color:var(--fs-color, var(--accent)); color:#fff;
+  }
+  .store-filter button[aria-pressed="true"] .store-dot{background:#fff !important;}
+  .bio-filter-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--ink-muted);
+    border-radius:999px; padding:7px 15px; font-size:.8rem; font-weight:700; cursor:pointer;
+    flex:none;
+  }
+  .bio-filter-btn:hover{border-color:var(--green); color:var(--green-ink);}
+  .bio-filter-btn[aria-pressed="true"]{background:var(--green); border-color:var(--green); color:#fff;}
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--surface-2); color:var(--ink);
+    border:1px solid var(--line); border-radius:999px;
+    padding:6px 14px; font-size:.8rem; font-weight:700; cursor:default;
+  }
+  .chip.clickable{cursor:pointer; border:none;}
+  .chip.clickable:hover{background:var(--accent-dark);}
+  .chip.match{background:var(--accent); color:var(--accent-contrast);}
+
+  .note{
+    background:var(--surface-2); border:1px dashed var(--line);
+    border-radius:var(--radius); padding:14px 16px;
+    font-size:.85rem; color:var(--ink-muted);
+  }
+
+  form.inline-form{
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; align-items:stretch;
+  }
+  fieldset.field{
+    border:1.5px solid var(--line); border-radius:14px;
+    padding:0 12px 9px; margin:0; flex:1 1 160px; min-width:0;
+    background:var(--surface);
+  }
+  fieldset.field legend{
+    font-size:.68rem; font-weight:700; color:var(--ink-muted);
+    padding:0 6px; text-transform:uppercase; letter-spacing:.04em;
+  }
+  fieldset.field input, fieldset.field select{
+    border:none; background:transparent; width:100%;
+    font-size:.9rem; padding:1px 2px 3px; color:var(--ink); font-family:inherit;
+  }
+  fieldset.field input:focus, fieldset.field select:focus{outline:none;}
+  fieldset.field:focus-within{border-color:var(--accent);}
+  .btn{
+    font-size:.88rem; font-weight:700; border-radius:999px; border:1px solid transparent;
+    padding:11px 20px; cursor:pointer; flex:0 0 auto; touch-action:manipulation;
+  }
+  .btn-primary{background:var(--accent); color:var(--accent-contrast);}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-ghost{background:var(--surface); border-color:var(--line); color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--accent); color:var(--accent-dark);}
+  .icon-btn{
+    width:28px; height:28px; flex:none;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--surface-2); border:none; border-radius:50%;
+    color:var(--ink-muted); cursor:pointer; font-size:.85rem; padding:0;
+  }
+  .icon-btn:hover{color:var(--danger); background:var(--danger-bg);}
+
+  /* ---------- offers ---------- */
+  .store-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(270px, 1fr));
+    gap:22px;
+  }
+  .store-col h2{
+    font-size:1rem; display:flex; align-items:center; gap:8px; margin-bottom:12px;
+  }
+  .store-dot{width:12px; height:12px; border-radius:50%; flex:none;}
+  .store-count{
+    font-family:'IBM Plex Mono', monospace; font-size:.75rem; color:var(--ink-muted);
+    font-weight:500; margin-left:auto;
+  }
+  .category-group{margin-bottom:18px;}
+  .category-group:last-child{margin-bottom:0;}
+  .category-heading{
+    display:flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:.78rem; font-weight:700; color:var(--ink-muted);
+    text-transform:uppercase; letter-spacing:.03em;
+    margin:0 0 9px; padding-bottom:6px; border-bottom:1px solid var(--line);
+  }
+  .category-count{
+    margin-left:auto; font-family:'IBM Plex Mono', monospace; font-weight:500;
+    font-size:.72rem; text-transform:none; letter-spacing:0;
+  }
+  .offer-list{display:flex; flex-direction:column; gap:12px;}
+  .offer-card{
+    position:relative;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 15px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:6px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .offer-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-hover);}
+  .offer-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .offer-name{font-weight:600; font-size:.92rem;}
+  .store-tag{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:.66rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+    color:var(--ink-muted); margin-bottom:2px;
+  }
+  .store-tag .store-dot{width:7px; height:7px;}
+  .offer-unit{font-size:.76rem; color:var(--ink-muted);}
+  .offer-price-row{display:flex; align-items:baseline; gap:8px;}
+  .offer-price{font-size:1.15rem; font-weight:600; color:var(--ink);}
+  .offer-price-old{font-size:.82rem; color:var(--ink-muted); text-decoration:line-through;}
+  .offer-valid{font-size:.72rem; color:var(--ink-muted);}
+  .offer-actions{display:flex; justify-content:flex-end; gap:6px; margin-top:2px;}
+  .btn-add, .btn-watch{
+    font-size:.72rem; font-weight:700; padding:5px 13px; border-radius:999px;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--accent-dark); cursor:pointer;
+    touch-action:manipulation;
+  }
+  .btn-add:hover, .btn-watch:hover{background:var(--accent-soft); border-color:var(--accent);}
+  .btn-add.added, .btn-watch.watching{background:var(--accent); color:var(--accent-contrast); border-color:var(--accent); cursor:default;}
+  .bio-tag{
+    flex:none; align-self:flex-start;
+    font-size:.64rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+    padding:3px 9px; border-radius:999px;
+    background:var(--green-bg); color:var(--green-ink);
+    display:inline-flex; align-items:center; gap:3px;
+  }
+  .discount-tag{
+    flex:none; align-self:flex-start;
+    font-size:.66rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+    padding:3px 10px 3px 15px;
+    background:var(--rose-bg); color:var(--rose-ink);
+    clip-path:polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 0 50%);
+    position:relative;
+  }
+  .discount-tag::after{
+    content:""; position:absolute; left:4px; top:50%; transform:translateY(-50%);
+    width:3px; height:3px; border-radius:50%; background:var(--rose-ink); opacity:.55;
+  }
+  .match-badge{
+    position:absolute; top:-9px; right:-9px;
+    width:27px; height:27px; border-radius:50%;
+    background:var(--accent); color:var(--accent-contrast);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.82rem; box-shadow:0 3px 8px rgba(0,0,0,.28);
+  }
+
+  /* ---------- shopping list ---------- */
+  .list-panel{max-width:560px;}
+  .list-row{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 4px; border-bottom:1px solid var(--line);
+  }
+  .list-row input[type="checkbox"]{width:19px; height:19px; accent-color:var(--accent); flex:none;}
+  .list-row .label{flex:1; font-size:.92rem;}
+  .list-row.checked .label{color:var(--ink-muted); text-decoration:line-through;}
+  .list-footer{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:14px; font-size:.82rem; color:var(--ink-muted);
+  }
+  .empty-state{
+    padding:28px 16px; text-align:center; color:var(--ink-muted); font-size:.88rem;
+    border:1px dashed var(--line); border-radius:var(--radius);
+  }
+
+  /* ---------- watchlist ---------- */
+  .watch-row{
+    display:flex; flex-direction:column; gap:8px;
+    padding:12px 4px; border-bottom:1px solid var(--line);
+  }
+  .watch-row-head{display:flex; align-items:flex-start; gap:12px;}
+  .watch-main{flex:1; min-width:160px;}
+  .watch-name{font-weight:600; font-size:.92rem;}
+  .watch-hit-count{font-weight:700; color:var(--accent-dark); font-size:.8rem;}
+  .watch-note{font-size:.78rem; color:var(--ink-muted);}
+  .watch-status{font-size:.78rem; font-weight:700; flex:none;}
+  .watch-status.hit{color:var(--accent-dark);}
+  .watch-status.miss{color:var(--ink-muted); font-weight:500;}
+  .watch-hits{display:flex; flex-direction:column; gap:6px;}
+  .watch-hit{
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+    background:var(--surface-2); border-radius:10px; padding:7px 11px; font-size:.82rem;
+  }
+  .watch-hit-name{flex:1; min-width:130px; font-weight:600;}
+  .watch-hit-unit{color:var(--ink-muted); font-weight:500; font-size:.78rem;}
+  .watch-hit-price{font-weight:700; color:var(--accent-dark); flex:none;}
+  .watch-hit-old{color:var(--ink-muted); text-decoration:line-through; font-size:.74rem; flex:none;}
+  .watch-hit-valid{width:100%; font-size:.72rem; color:var(--ink-muted);}
+
+  .source-line{font-size:.82rem; color:var(--ink-muted); margin-bottom:16px;}
+
+  /* ---------- prospekte ---------- */
+  .prospekt-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:16px;
+  }
+  .prospekt-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:10px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .prospekt-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-hover);}
+  .prospekt-card .store-name{
+    display:flex; align-items:center; gap:8px; font-weight:700; font-size:.98rem;
+  }
+  .prospekt-card p{margin:0; font-size:.82rem; color:var(--ink-muted);}
+  .prospekt-card a.btn{text-decoration:none; text-align:center;}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:640px){
+    .hero h1{font-size:1.55rem;}
+    .hero-stat-value{font-size:2.05rem;}
+    main{padding:22px 14px 50px;}
+    .tabbar-wrap{padding:0 14px;}
+    .hero{padding:0 14px;}
+  }
+  @media (max-width:520px){
+    form.inline-form{flex-direction:column; align-items:stretch;}
+    fieldset.field{flex:1 1 auto !important;}
+    form.inline-form > .btn{width:100%;}
+    .panel-intro{flex-direction:column; align-items:flex-start;}
+    .watch-row{gap:8px;}
+    .watch-status{flex-basis:100%;}
+    nav#tabs button{padding:9px 10px; font-size:.78rem;}
+    .hero-card{padding:22px 18px 52px;}
+    .offer-top{flex-wrap:wrap;}
+    .filter-toggle-label{display:none;}
+    .filter-toggle{padding:9px 12px;}
+  }
+  @media (max-width:380px){
+    .store-grid{grid-template-columns:1fr;}
+  }
+  #debug-banner{
+    position:fixed; left:0; right:0; bottom:0; z-index:99999;
+    background:#b00020; color:#fff; font:11px/1.5 var(--mono, monospace);
+    padding:10px 14px; max-height:38vh; overflow:auto; white-space:pre-wrap;
+    box-shadow:0 -2px 12px rgba(0,0,0,.3);
+  }
+  #debug-banner button{
+    display:block; margin-bottom:6px; background:#fff; color:#b00020; border:none;
+    border-radius:6px; padding:4px 10px; font-weight:700; font-size:11px; cursor:pointer;
+  }
+
+  /* ---------- setup panel (Firebase-Einrichtung) ---------- */
+  .setup-panel{
+    position:fixed; inset:0; z-index:9000;
+    background:rgba(16,14,36,.6); backdrop-filter:blur(2px);
+    display:flex; align-items:flex-start; justify-content:center;
+    padding:28px 16px; overflow-y:auto;
+  }
+  .setup-card{
+    background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow-hover);
+    max-width:560px; width:100%; padding:28px 26px; color:var(--ink);
+  }
+  .setup-card h2{font-size:1.25rem; font-weight:800; margin-bottom:10px;}
+  .setup-card p{font-size:.88rem; color:var(--ink-muted); line-height:1.55; margin:0 0 14px;}
+  .setup-steps{margin:0 0 16px; padding-left:1.2em; display:flex; flex-direction:column; gap:8px;}
+  .setup-steps li{font-size:.86rem; color:var(--ink); line-height:1.5;}
+  .setup-code{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.76rem;
+    line-height:1.5; overflow-x:auto; white-space:pre; margin:0 0 12px; color:var(--ink);
+  }
+  .setup-hint{font-size:.78rem; color:var(--ink-muted); margin-bottom:18px;}
+  #setup-dismiss{width:100%;}
+</style>
+</head>
+<body>
+
+<div id="debug-banner" hidden></div>
+
+<div class="setup-panel" id="setup-panel" hidden>
+  <div class="setup-card">
+    <h2>Fast fertig — noch eine kleine Einrichtung</h2>
+    <p>Damit alle in der Familie denselben Einkaufszettel und dieselbe Merkliste sehen, braucht diese Seite eine eigene, kostenlose Cloud-Datenbank (Firebase). Das machst du einmalig:</p>
+    <ol class="setup-steps">
+      <li>Auf <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> mit deinem Google-Konto ein neues Projekt anlegen (z. B. „marktvergleich-bernhausen").</li>
+      <li>Im Projekt links auf <strong>Build → Firestore Database → Datenbank erstellen</strong> und den <strong>Testmodus</strong> wählen.</li>
+      <li>Links auf <strong>Build → Authentication → Los geht's</strong>, Anbieter <strong>E-Mail/Passwort</strong> aktivieren und darin den Schalter <strong>„E-Mail-Link (Anmeldung ohne Passwort)"</strong> einschalten.</li>
+      <li>Unter <strong>Authentication → Settings → Authorized domains</strong> die Adresse deiner späteren Webseite eintragen (z. B. <code>dein-name.github.io</code>) — sonst funktioniert der Anmelde-Link dort nicht.</li>
+      <li>Zurück im Projekt-Überblick auf das Web-Symbol (&lt;/&gt;) klicken und eine App registrieren (Name egal, „Firebase Hosting" kann abgewählt bleiben).</li>
+      <li>Den angezeigten <code>firebaseConfig</code>-Block kopieren.</li>
+      <li>Im HTML-Code dieser Seite die Zeile <code>var FIREBASE_CONFIG = &#123; ... &#125;;</code> suchen, durch den kopierten Block ersetzen.</li>
+      <li>Direkt darunter bei <code>var ALLOWED_EMAILS = [...]</code> die E-Mail-Adressen eintragen, die Zugriff haben sollen, dann die Datei speichern.</li>
+    </ol>
+    <p>Im Reiter <strong>Regeln</strong> der Firestore-Datenbank diesen Text einfügen und veröffentlichen, damit nur angemeldete, freigegebene Adressen lesen &amp; schreiben dürfen (die E-Mails hier müssen zu <code>ALLOWED_EMAILS</code> oben passen):</p>
+    <pre class="setup-code">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /state/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          'DEINE_EMAIL@beispiel.de'
+        ];
+    }
+  }
+}</pre>
+    <p class="setup-hint">Erst mit diesen Regeln ist der Zugriff wirklich auf die eingetragenen Adressen beschränkt — die Liste in <code>ALLOWED_EMAILS</code> im Code sorgt nur für die passende Ansicht, schützt die Daten aber allein nicht.</p>
+    <button type="button" id="setup-dismiss" class="btn btn-ghost">Erstmal ohne Datenbank ansehen (nur lokal, nichts wird geteilt)</button>
+  </div>
+</div>
+
+<div class="setup-panel" id="login-panel" hidden>
+  <div class="setup-card">
+    <h2>Anmelden</h2>
+    <p>Nur freigegebene E-Mail-Adressen können diese Liste sehen. Trag deine Adresse ein — du bekommst einen Anmelde-Link per Mail, kein Passwort nötig.</p>
+    <fieldset class="field" style="margin-bottom:14px;">
+      <legend>E-Mail-Adresse</legend>
+      <input type="email" id="login-email" placeholder="du@beispiel.de" autocomplete="email">
+    </fieldset>
+    <button type="button" id="login-send" class="btn btn-primary" style="width:100%; margin-bottom:12px;">Anmelde-Link senden</button>
+    <p class="setup-hint" id="login-status" hidden></p>
+  </div>
+</div>
+
+<div id="app-shell" hidden>
+<div class="hero">
+  <div class="hero-card">
+    <div class="hero-decor" aria-hidden="true"></div>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Darstellung wechseln">🌙</button>
+    <div class="hero-inner">
+      <span class="hero-eyebrow">Rewe · Aldi Süd · Lidl</span>
+      <h1>Marktvergleich Bernhausen</h1>
+      <span class="place">Filderstadt-Bernhausen</span>
+      <div class="hero-stat">
+        <span class="hero-stat-value mono" id="hero-total">–</span>
+        <span class="hero-stat-label">Angebote diese Woche</span>
+      </div>
+      <div class="hero-chips">
+        <span class="hero-chip"><span class="dot"></span><span id="updated-text">Lade Angebote …</span></span>
+        <span class="hero-chip hero-chip-watch" id="hero-watch-chip" hidden>🔔 <span id="hero-watch-count">0</span> Treffer auf der Merkliste</span>
+        <button type="button" id="logout-btn" class="hero-chip" style="border:none; cursor:pointer;">Abmelden</button>
+      </div>
+      <span class="hero-build">Eigene Webseite · v1.0</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabbar-wrap">
+  <nav id="tabs">
+    <button data-tab="offers" aria-selected="true">Angebote</button>
+    <button data-tab="list" aria-selected="false">Zettel</button>
+    <button data-tab="watch" aria-selected="false">Merkliste</button>
+    <button data-tab="prospekte" aria-selected="false">Prospekte</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ================= OFFERS ================= -->
+  <section id="panel-offers">
+    <div class="offers-controls">
+      <div class="controls-row">
+        <input type="search" id="offers-search" class="search-box" placeholder="Angebote durchsuchen … (z. B. Hackfleisch)" maxlength="60">
+        <button type="button" id="filter-toggle" class="filter-toggle" aria-expanded="false" aria-controls="filter-panel">
+          <span class="filter-toggle-icon" aria-hidden="true">☰</span><span class="filter-toggle-label">Filter</span><span class="filter-badge" id="filter-badge" hidden>0</span>
+        </button>
+      </div>
+      <div class="filter-panel" id="filter-panel" hidden>
+        <div class="filter-group">
+          <span class="filter-group-label">Markt</span>
+          <div class="store-filter" id="store-filter">
+            <button type="button" data-store="" aria-pressed="true">Alle</button>
+            <button type="button" data-store="rewe" aria-pressed="false" style="--fs-color:var(--store-rewe)"><span class="store-dot" style="background:var(--store-rewe)"></span>Rewe</button>
+            <button type="button" data-store="aldi" aria-pressed="false" style="--fs-color:var(--store-aldi)"><span class="store-dot" style="background:var(--store-aldi)"></span>Aldi Süd</button>
+            <button type="button" data-store="lidl" aria-pressed="false" style="--fs-color:var(--store-lidl)"><span class="store-dot" style="background:var(--store-lidl)"></span>Lidl</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">Kategorie</span>
+          <div class="category-filter" id="category-filter"></div>
+        </div>
+        <div class="filter-group filter-group-row">
+          <button type="button" id="bio-filter" class="bio-filter-btn" aria-pressed="false">🌱 Nur Bio</button>
+          <button type="button" id="filter-reset" class="filter-reset-btn" hidden>Filter zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+    <div class="note" id="seed-banner" hidden style="margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <span>Es sind noch keine Angebote in deiner Datenbank. Die schon recherchierten Angebote dieser Woche einmalig laden?</span>
+      <button type="button" id="seed-load-btn" class="btn btn-primary">Angebote jetzt laden</button>
+    </div>
+    <div class="panel-intro">
+      <span class="summary" id="offers-summary">Angebote werden geladen …</span>
+      <span class="chip clickable match" id="match-chip" hidden></span>
+    </div>
+    <div class="store-grid" id="store-grid"></div>
+  </section>
+
+  <!-- ================= SHOPPING LIST ================= -->
+  <section id="panel-list" class="list-panel" hidden>
+    <form class="inline-form" id="list-form">
+      <fieldset class="field">
+        <legend>Neu auf dem Zettel</legend>
+        <input type="text" id="list-input" placeholder="z. B. Zucchini, Milch, Kaffee …" maxlength="80">
+      </fieldset>
+      <button class="btn btn-primary" type="button" id="list-submit">Hinzufügen</button>
+    </form>
+    <div id="list-items"></div>
+    <div class="list-footer" id="list-footer" hidden>
+      <span id="list-progress"></span>
+      <button class="btn btn-ghost" id="clear-checked" type="button">Erledigte löschen</button>
+    </div>
+  </section>
+
+  <!-- ================= WATCHLIST ================= -->
+  <section id="panel-watch" class="list-panel" hidden>
+    <p class="source-line">Trag ein Produkt ein, das du im Blick behalten willst — sobald es bei Rewe, Aldi oder Lidl im Angebot ist, siehst du es hier direkt markiert. Auch Oberbegriffe funktionieren, z. B. zeigt „Fisch" oder „Backfisch" alle Fisch- und Meeresfrüchte-Angebote an.</p>
+    <form class="inline-form" id="watch-form">
+      <fieldset class="field">
+        <legend>Produkt</legend>
+        <input type="text" id="watch-input" placeholder="z. B. Hackfleisch" maxlength="60">
+      </fieldset>
+      <fieldset class="field">
+        <legend>Notiz (optional)</legend>
+        <input type="text" id="watch-note-input" placeholder="z. B. für den Grillabend">
+      </fieldset>
+      <button class="btn btn-primary" type="button" id="watch-submit">Beobachten</button>
+    </form>
+    <div id="watch-items"></div>
+  </section>
+
+  <!-- ================= PROSPEKTE ================= -->
+  <section id="panel-prospekte" hidden>
+    <p class="source-line">Für den vollständigen Original-Prospekt zum selbst Durchblättern:</p>
+    <div class="prospekt-grid">
+      <div class="prospekt-card">
+        <span class="store-name"><span class="store-dot" style="background:var(--store-rewe)"></span>Rewe — Karlstr. 62, Filderstadt</span>
+        <p>Aktueller Markt-Handzettel deiner Filiale in Bernhausen.</p>
+        <a class="btn btn-primary" href="https://www.rewe.de/angebote/filderstadt/865789/rewe-markt-karlstr-62/?market-flyer=active" target="_blank" rel="noopener">Prospekt öffnen ↗</a>
+      </div>
+      <div class="prospekt-card">
+        <span class="store-name"><span class="store-dot" style="background:var(--store-aldi)"></span>Aldi Süd</span>
+        <p>Bundesweiter Wochenprospekt (Filialsuche für Bernhausen direkt auf der Seite möglich).</p>
+        <a class="btn btn-primary" href="https://www.aldi-sued.de/prospekte" target="_blank" rel="noopener">Prospekt öffnen ↗</a>
+      </div>
+      <div class="prospekt-card">
+        <span class="store-name"><span class="store-dot" style="background:var(--store-lidl)"></span>Lidl</span>
+        <p>Bundesweiter Online-Prospekt mit allen aktuellen Aktionen.</p>
+        <a class="btn btn-primary" href="https://www.lidl.de/c/online-prospekte/s10005610" target="_blank" rel="noopener">Prospekt öffnen ↗</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------- Firebase-Konfiguration ----------------
+  // Hier die Werte aus deinem Firebase-Projekt eintragen (siehe Einrichtungs-Hinweis
+  // auf der Seite, falls dieser noch angezeigt wird). Bis diese Werte echt sind
+  // (nicht mehr mit "DEIN_" beginnen), läuft die Seite nur lokal ohne geteilte Daten.
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyAyz7Clq-3ZXRuF-AE_ONedlp8FsTG0KDM",
+    authDomain: "einkaufsapp-d4f3d.firebaseapp.com",
+    projectId: "einkaufsapp-d4f3d",
+    storageBucket: "einkaufsapp-d4f3d.firebasestorage.app",
+    messagingSenderId: "584303241509",
+    appId: "1:584303241509:web:97c299a02bec92f01412cc"
+  };
+  // Nur diese E-Mail-Adressen dürfen sich anmelden und die Liste sehen. Wichtig: das
+  // hier ist nur die passende Ansicht — der eigentliche Schutz muss zusätzlich in den
+  // Firestore-Regeln stehen (siehe Einrichtungs-Hinweis), sonst könnte jeder mit einer
+  // beliebigen E-Mail-Adresse trotzdem lesen/schreiben.
+  var ALLOWED_EMAILS = [
+    "marco.alber@icloud.com"
+    // weitere Adresse ergänzen, z. B. "monika@beispiel.de"
+  ];
+  function isFirebaseConfigured(){
+    return !!(FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId &&
+      FIREBASE_CONFIG.apiKey.indexOf("DEIN_") !== 0 && FIREBASE_CONFIG.projectId.indexOf("DEIN_") !== 0);
+  }
+  function isAllowedEmail(email){
+    var e = String(email || "").toLowerCase().trim();
+    if (!e) return false;
+    return ALLOWED_EMAILS.some(function(a){ return String(a || "").toLowerCase().trim() === e; });
+  }
+
+  // ---------------- Einmalige Startdaten ----------------
+  // Die schon recherchierten Angebote dieser Woche (Rewe/Aldi/Lidl), damit du nach der
+  // Einrichtung nicht bei einer leeren Liste anfängst. Über den Button unten in der
+  // Angebote-Ansicht werden sie einmalig in deine eigene Datenbank geschrieben; danach
+  // übernimmt der geplante wöchentliche Abgleich die weiteren Aktualisierungen.
+  var SEED_OFFERS = {"items":[{"id":"rewe-1","oldPrice":"","price":"0,99 €","product":"Grüne Tafelbirnen, Spanien","store":"rewe","unit":"1 kg, Kl. I","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-2","oldPrice":"","price":"1,79 €","product":"Rote Tafeläpfel, Deutschland","store":"rewe","unit":"1 kg, Kl. I","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-3","oldPrice":"","price":"1,79 €","product":"Bananen","store":"rewe","unit":"1 kg","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-4","oldPrice":"","price":"1,99 €","product":"Kiwibeeren, Neuseeland","store":"rewe","unit":"125 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-5","oldPrice":"","price":"0,59 €","product":"SunGold Kiwi, Neuseeland","store":"rewe","unit":"Stück","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-6","oldPrice":"","price":"2,99 €","product":"Pflaumen, Deutschland","store":"rewe","unit":"1,5 kg Schale","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-7","oldPrice":"","price":"0,55 €","product":"Passionsfrucht, Kolumbien","store":"rewe","unit":"Stück","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-8","oldPrice":"","price":"1,99 €","product":"Rote Johannisbeeren, Deutschland","store":"rewe","unit":"200 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-9","oldPrice":"","price":"2,79 €","product":"Orangen zum Saften","store":"rewe","unit":"1 kg Netz","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-10","oldPrice":"","price":"1,69 €","product":"Orangensaft, ohne Fruchtfleisch","store":"rewe","unit":"330 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-11","oldPrice":"","price":"2,29 €","product":"Kokosnuss","store":"rewe","unit":"Stück","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-12","oldPrice":"","price":"1,99 €","product":"Feigen, Türkei","store":"rewe","unit":"500 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-13","oldPrice":"","price":"2,79 €","product":"Saftorangen","store":"rewe","unit":"1 kg","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-14","oldPrice":"","price":"0,55 €","product":"Lauch, Deutschland","store":"rewe","unit":"Stück, Kl. II","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-15","oldPrice":"","price":"1,49 €","product":"Braune Champignons, Deutschland","store":"rewe","unit":"250 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-16","oldPrice":"","price":"1,99 €","product":"Broccoli Bimi","store":"rewe","unit":"200 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-17","oldPrice":"","price":"0,88 €","product":"Schalotten","store":"rewe","unit":"250 g Netz","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-18","oldPrice":"","price":"0,55 €","product":"Radieschen, Deutschland","store":"rewe","unit":"Bund","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-19","oldPrice":"","price":"1,49 €","product":"Suppengrün","store":"rewe","unit":"500 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-20","oldPrice":"","price":"2,22 €","product":"Mandarinen, Südafrika","store":"rewe","unit":"750 g Netz","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-21","oldPrice":"","price":"0,99 €","product":"Möhren, klein","store":"rewe","unit":"250 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-22","oldPrice":"","price":"3,99 €","product":"Fruchtsalat Classic","store":"rewe","unit":"500 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-23","oldPrice":"","price":"1,79 €","product":"Kartoffeln, Deutschland","store":"rewe","unit":"2 kg Beutel, Kl. I","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-24","oldPrice":"","price":"1,99 €","product":"Besenheide „Duo“ oder Chrysantheme","store":"rewe","unit":"Stück","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-25","oldPrice":"","price":"7,99 €","product":"„Bunter Herbst“ Pflanzenmix","store":"rewe","unit":"Stück","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-26","oldPrice":"","price":"2,79 €","product":"Chrysantheme „Best Friends“","store":"rewe","unit":"Stück","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-27","oldPrice":"","price":"3,79 €","product":"Sommergarten Sukkulente","store":"rewe","unit":"Stück","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-28","oldPrice":"","price":"3,99 €","product":"Wildblumenstrauß","store":"rewe","unit":"Bund","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-29","oldPrice":"","price":"1,29 €","product":"Milram Müritzer Scheiben","store":"rewe","unit":"150 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-30","oldPrice":"","price":"0,99 €","product":"Bärenmarke Frische oder Haltbare Milch","store":"rewe","unit":"1 L","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-31","oldPrice":"","price":"1,69 €","product":"Alpro Sojadrink, ungesüßt","store":"rewe","unit":"1 L","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-32","oldPrice":"","price":"1,99 €","product":"Vly Erbsenprotein-Drink","store":"rewe","unit":"1 L","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-33","oldPrice":"","price":"1,29 €","product":"Kinder Pingui","store":"rewe","unit":"4 x 30 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-34","oldPrice":"","price":"0,59 €","product":"Ehrmann Grand Dessert","store":"rewe","unit":"190 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-35","oldPrice":"","price":"0,89 €","product":"Müller Kalinka Kefir","store":"rewe","unit":"500 g Flasche, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-36","oldPrice":"","price":"1,39 €","product":"Meggle Feine Butter","store":"rewe","unit":"250 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-37","oldPrice":"","price":"0,99 €","product":"Milram Gewürzquark","store":"rewe","unit":"185 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-38","oldPrice":"","price":"1,59 €","product":"Rama Culinesse","store":"rewe","unit":"450 ml, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-39","oldPrice":"","price":"2,99 €","product":"Fage Griechischer Joghurt","store":"rewe","unit":"450 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-40","oldPrice":"","price":"1,79 €","product":"Mövenpick Eis","store":"rewe","unit":"850 ml, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-41","oldPrice":"","price":"2,49 €","product":"Gwitterchäs Schweizer Käse","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-42","oldPrice":"","price":"2,49 €","product":"Burrata","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-43","oldPrice":"","price":"1,79 €","product":"Grillkäse mit Gemüse","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-44","oldPrice":"","price":"1,49 €","product":"Schwarze Oliven mit Kräutern","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-45","oldPrice":"","price":"1,49 €","product":"Palatum Grüne Oliven","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-46","oldPrice":"","price":"1,99 €","product":"Appenzeller Käse","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-47","oldPrice":"","price":"0,89 €","product":"Bauer Butterkäse","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-48","oldPrice":"","price":"1,69 €","product":"Bergader Bergbauern Käse","store":"rewe","unit":"150 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-49","oldPrice":"","price":"2,39 €","product":"Leerdammer Knusper Minis","store":"rewe","unit":"150 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-50","oldPrice":"","price":"1,69 €","product":"Chavroux Ziegenfrischkäse","store":"rewe","unit":"150 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-51","oldPrice":"","price":"2,49 €","product":"Loser Hausmacher Handkäse","store":"rewe","unit":"200 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-52","oldPrice":"","price":"2,29 €","product":"Saint Albray Weichkäse","store":"rewe","unit":"180 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-53","oldPrice":"","price":"1,79 €","product":"Oatly Barista Haferdrink","store":"rewe","unit":"1 L","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-54","oldPrice":"","price":"0,69 €","product":"Frische Hähnchenschenkel, Kl. A","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-55","oldPrice":"","price":"7,99 €","product":"Frisches Maishähnchen","store":"rewe","unit":"1 kg","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-56","oldPrice":"","price":"6,29 €","product":"Frisches Puten-Geschnetzeltes","store":"rewe","unit":"400 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-57","oldPrice":"","price":"2,99 €","product":"Roastbeef vom Rind","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-58","oldPrice":"","price":"0,99 €","product":"Spanferkel-Rollbraten","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-59","oldPrice":"","price":"3,99 €","product":"Kalbssteaks","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-60","oldPrice":"","price":"1,49 €","product":"Landbauern Presskopf","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-61","oldPrice":"","price":"1,49 €","product":"Landbauern Cordon Bleu","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-62","oldPrice":"","price":"1,49 €","product":"Landbauern Grillfackeln","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-63","oldPrice":"","price":"1,39 €","product":"Landbauern Hüftsteaks","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-64","oldPrice":"","price":"1,79 €","product":"Casa Modena Rosmarinschinken","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-65","oldPrice":"","price":"1,59 €","product":"El Pozo Chorizo","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-66","oldPrice":"","price":"1,59 €","product":"Höhenrainer Geflügel-Sortiment","store":"rewe","unit":"100 g, 10% Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-67","oldPrice":"","price":"1,49 €","product":"Stockmeyer Sportler-Salami","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-68","oldPrice":"","price":"1,79 €","product":"Aoste Le Jamby Schinken","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-69","oldPrice":"","price":"1,29 €","product":"Schneider Weißwurst","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-70","oldPrice":"","price":"1,29 €","product":"Schneider Puten-Fleischkäse","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-71","oldPrice":"","price":"2,19 €","product":"Langewiesche Putenbrust","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-72","oldPrice":"","price":"0,99 €","product":"Meister Münchner Weißwurst","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-73","oldPrice":"","price":"3,79 €","product":"Metzgers Barbecue Schweinerückensteaks","store":"rewe","unit":"450 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-74","oldPrice":"","price":"6,99 €","product":"Schweinenacken-Steaks, XXL Familienpackung","store":"rewe","unit":"1 kg","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-75","oldPrice":"","price":"2,99 €","product":"Spanferkel-Cevapcici","store":"rewe","unit":"300 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-76","oldPrice":"","price":"4,99 €","product":"Kalbsburger","store":"rewe","unit":"200 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-77","oldPrice":"","price":"5,99 €","product":"Meisterklasse Wiener Würstchen","store":"rewe","unit":"750 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-78","oldPrice":"","price":"0,99 €","product":"Ferdi Fuchs Mini-Würstchen","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-79","oldPrice":"","price":"1,49 €","product":"Zimbo Zwiebelmett","store":"rewe","unit":"120 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-80","oldPrice":"","price":"1,99 €","product":"Dr. Oetker Pizza Tradizionale","store":"rewe","unit":"385 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-81","oldPrice":"","price":"1,99 €","product":"Dr. Oetker Pizza Quattro Formaggi","store":"rewe","unit":"410 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-82","oldPrice":"","price":"1,99 €","product":"Coppenrath & Wiese Roggenbrötchen","store":"rewe","unit":"490 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-83","oldPrice":"","price":"1,99 €","product":"Coppenrath & Wiese Dinkelbrötchen","store":"rewe","unit":"420 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-84","oldPrice":"","price":"2,99 €","product":"Steinhaus Quiche Lorraine","store":"rewe","unit":"300 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-85","oldPrice":"","price":"2,99 €","product":"Steinhaus Elsässer Flammkuchen","store":"rewe","unit":"350 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-86","oldPrice":"","price":"1,89 €","product":"Popp Kartoffel- oder Krautsalat","store":"rewe","unit":"400 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-87","oldPrice":"","price":"2,49 €","product":"Rügenwalder Veganes Schnitzel","store":"rewe","unit":"2 x 90 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-88","oldPrice":"","price":"2,49 €","product":"Vegane Mühlen Cordon bleu","store":"rewe","unit":"2 x 100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-89","oldPrice":"","price":"2,49 €","product":"Kinder Bueno","store":"rewe","unit":"6 x 21,5 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-90","oldPrice":"","price":"2,49 €","product":"Kinder Country","store":"rewe","unit":"9 x 23,5 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-91","oldPrice":"","price":"1,49 €","product":"Kinder Maxi King","store":"rewe","unit":"3 x 35 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-92","oldPrice":"","price":"1,49 €","product":"Kinder Milchschnitte","store":"rewe","unit":"5 x 28 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-93","oldPrice":"","price":"1,69 €","product":"Ritter Sport Nussklasse","store":"rewe","unit":"100 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-94","oldPrice":"","price":"1,99 €","product":"Nestlé Choco Crossies","store":"rewe","unit":"150 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-95","oldPrice":"","price":"1,99 €","product":"Nestlé After Eight","store":"rewe","unit":"200 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-96","oldPrice":"","price":"0,79 €","product":"Katjes Fruchtgummi","store":"rewe","unit":"210 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-97","oldPrice":"","price":"1,19 €","product":"Funny-frisch Pom-Bär","store":"rewe","unit":"75 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-98","oldPrice":"","price":"1,19 €","product":"Frit-Sticks","store":"rewe","unit":"100 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-99","oldPrice":"","price":"1,19 €","product":"Burger Landknäcke","store":"rewe","unit":"250 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-100","oldPrice":"","price":"1,79 €","product":"Wasa Sandwich Tomate & Basilikum","store":"rewe","unit":"3 x 40 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-101","oldPrice":"","price":"1,99 €","product":"Wasa Sandwich Pizza","store":"rewe","unit":"Packung","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-102","oldPrice":"","price":"0,69 €","product":"Fritt","store":"rewe","unit":"70 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-103","oldPrice":"","price":"2,22 €","product":"Schöller Pirulo Wassermelone","store":"rewe","unit":"365 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-104","oldPrice":"","price":"2,22 €","product":"Schöller Pirulo Kaktus","store":"rewe","unit":"9 x 45 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-105","oldPrice":"","price":"1,49 €","product":"Danone Frucht Zwerge","store":"rewe","unit":"6 x 50 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-106","oldPrice":"","price":"0,99 €","product":"Maggi 5 Minuten Terrine","store":"rewe","unit":"61 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-107","oldPrice":"","price":"0,99 €","product":"Magic Asia Nudel Cup","store":"rewe","unit":"63 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-108","oldPrice":"","price":"0,89 €","product":"Maggi Delikatess Sauce","store":"rewe","unit":"Packung","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-109","oldPrice":"","price":"0,99 €","product":"Thomy Delikatess Senf","store":"rewe","unit":"200 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-110","oldPrice":"","price":"0,69 €","product":"Maggi Guten Appetit Suppe","store":"rewe","unit":"Packung, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-111","oldPrice":"","price":"0,99 €","product":"Pomito Passierte Tomaten","store":"rewe","unit":"500 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-112","oldPrice":"","price":"2,29 €","product":"Schwartau Konfitüre Himbeere","store":"rewe","unit":"270 g, +0,30 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-113","oldPrice":"","price":"2,29 €","product":"Schwartau Extra Konfitüre Erdbeere","store":"rewe","unit":"340 g, +0,30 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-114","oldPrice":"","price":"0,88 €","product":"Knorr Salat Krönung","store":"rewe","unit":"5er-Pack, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-115","oldPrice":"","price":"1,49 €","product":"Hengstenberg Mildessa Sauerkraut","store":"rewe","unit":"400 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-116","oldPrice":"","price":"1,49 €","product":"Hengstenberg Weinsauerkraut","store":"rewe","unit":"810 g","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-117","oldPrice":"","price":"0,89 €","product":"Gerolsteiner Mineralwasser","store":"rewe","unit":"1,5 L, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-118","oldPrice":"","price":"0,99 €","product":"Adelholzener Active O2","store":"rewe","unit":"0,75 L, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-119","oldPrice":"","price":"1,11 €","product":"Coca-Cola","store":"rewe","unit":"1,25 L, Pfand 0,25 €","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-120","oldPrice":"","price":"3,99 €","product":"Coca-Cola 6er","store":"rewe","unit":"6 x 0,33 L, Pfand 1,50 €","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-121","oldPrice":"","price":"1,89 €","product":"Happy Day Saft oder Nektar","store":"rewe","unit":"1 L (2+2 gratis)","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-122","oldPrice":"","price":"1,69 €","product":"Innocent Smoothie","store":"rewe","unit":"250 ml, Pfand 0,25 €","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-123","oldPrice":"","price":"1,99 €","product":"True Fruits No Lemonade","store":"rewe","unit":"0,33 L","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-124","oldPrice":"","price":"4,99 €","product":"Crodino Biondo","store":"rewe","unit":"6 x 98 ml, +0,20 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-125","oldPrice":"","price":"1,49 €","product":"Rockstar Energy Drink","store":"rewe","unit":"0,5 L Dose (2+2 gratis)","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-126","oldPrice":"","price":"3,99 €","product":"Mumm Jahrgangssekt","store":"rewe","unit":"0,75 L, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-127","oldPrice":"","price":"2,99 €","product":"Maybach Qualitätswein","store":"rewe","unit":"0,75 L, trocken, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-128","oldPrice":"","price":"5,49 €","product":"Anheuser-Busch Bud","store":"rewe","unit":"6 x 0,3 L, Pfand 0,48 €","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-129","oldPrice":"","price":"5,49 €","product":"Corona Mexican Beer","store":"rewe","unit":"6 x 355 ml, Pfand 0,48 €","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-130","oldPrice":"","price":"5,49 €","product":"Corona Alkoholfrei","store":"rewe","unit":"6 x 355 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-131","oldPrice":"","price":"3,99 €","product":"Bitburger Pils","store":"rewe","unit":"6 x 0,33 L, Pfand 0,48 €","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-132","oldPrice":"","price":"3,99 €","product":"Bitburger Alkoholfrei","store":"rewe","unit":"6 x 0,33 L","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-133","oldPrice":"","price":"4,49 €","product":"Erdinger Weißbier","store":"rewe","unit":"6 x 0,33 L, Pfand 0,48 €","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-134","oldPrice":"","price":"4,49 €","product":"Erdinger Alkoholfrei","store":"rewe","unit":"6 x 0,33 L","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-135","oldPrice":"","price":"1,59 €","product":"Meßmer Schwarztee Earl Grey","store":"rewe","unit":"43,75 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-136","oldPrice":"","price":"1,59 €","product":"Meßmer Kräutertee Pfefferminze","store":"rewe","unit":"56,25 g, +0,10 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-137","oldPrice":"","price":"1,19 €","product":"Fa Duschcreme oder Duschgel","store":"rewe","unit":"250 ml, +0,20 € Bonus","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-138","oldPrice":"","price":"1,49 €","product":"L'Oréal Men Expert Duschgel","store":"rewe","unit":"250 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-139","oldPrice":"","price":"2,99 €","product":"Taft Schaumfestiger Volumen","store":"rewe","unit":"150 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-140","oldPrice":"","price":"2,99 €","product":"Taft Haarspray Power","store":"rewe","unit":"250 ml","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-141","oldPrice":"","price":"3,59 €","product":"Oral-B Zahncreme 3D White Luxe","store":"rewe","unit":"75 ml (2+1 gratis)","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-142","oldPrice":"","price":"4,99 €","product":"Persil Universal Megaperls","store":"rewe","unit":"16 WL","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-143","oldPrice":"","price":"4,99 €","product":"Persil Colorwaschmittel Kraft Gel","store":"rewe","unit":"20 WL","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-144","oldPrice":"","price":"1,39 €","product":"WC Frisch Kraft-Aktiv","store":"rewe","unit":"50 g (gratis zu Persil)","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-145","oldPrice":"","price":"1,99 €","product":"Tempo Taschentücher Box","store":"rewe","unit":"100 Tücher","validFrom":"07.09.","validTo":"13.09."},{"id":"rewe-146","oldPrice":"","price":"1,99 €","product":"Tempo Taschentücher, 4-lagig","store":"rewe","unit":"15 x 10 Tücher","validFrom":"07.09.","validTo":"13.09."},{"id":"aldi-1","oldPrice":"0,79 €","price":"0,49 €","product":"Franzbrötchen (Meine Backwelt, Saftiger Plunder mit Zimtfüllung)","store":"aldi","unit":"je Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-2","oldPrice":"1,69 €","price":"1,15 €","product":"Choceur Milk Jumbo","store":"aldi","unit":"150 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-3","oldPrice":"","price":"1,49 €","product":"Zwetschgen im Henkelkorb, lose","store":"aldi","unit":"kg","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-4","oldPrice":"","price":"1,25 €","product":"Trauben dunkel, kernlos","store":"aldi","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-5","oldPrice":"","price":"1,79 €","product":"Äpfel, fein säuerlich","store":"aldi","unit":"1 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-6","oldPrice":"","price":"0,44 €","product":"Zespri Kiwi, grün","store":"aldi","unit":"Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-7","oldPrice":"","price":"1,49 €","product":"Zitronen","store":"aldi","unit":"750 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-8","oldPrice":"1,49 €","price":"1,11 €","product":"Bio-Naturland-Karotten","store":"aldi","unit":"1 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-9","oldPrice":"5,29 €","price":"3,99 €","product":"BBQ Cevapcici (vom Rind, gewürzt)","store":"aldi","unit":"400 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-10","oldPrice":"5,79 €","price":"4,59 €","product":"Meine Metzgerei Rinder-Hackfleisch","store":"aldi","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-11","oldPrice":"6,79 €","price":"4,99 €","product":"Meine Metzgerei Schweinefilet","store":"aldi","unit":"ca. 567 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-12","oldPrice":"2,99 €","price":"2,39 €","product":"Meine Metzgerei Minutensteaks (vom Schwein)","store":"aldi","unit":"400 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-13","oldPrice":"3,99 €","price":"3,29 €","product":"BBQ Hähnchenschenkel-Steaks, mariniert","store":"aldi","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-14","oldPrice":"9,99 €","price":"7,99 €","product":"Meine Metzgerei Putenbrustfilet-Teilstücke","store":"aldi","unit":"800 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-15","oldPrice":"","price":"6,79 €","product":"Meine Metzgerei Hähnchen-Schenkel mit Rückenstück XXL","store":"aldi","unit":"2 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-16","oldPrice":"5,99 €","price":"4,99 €","product":"Meine Metzgerei Chicken Nuggets XXL","store":"aldi","unit":"1 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-17","oldPrice":"1,49 €","price":"1,19 €","product":"Rio D'oro Traubensaft, 100% Direktsaft","store":"aldi","unit":"1 l","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-18","oldPrice":"1,49 €","price":"1,19 €","product":"Bellasan Pflanzen-Margarine","store":"aldi","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-19","oldPrice":"0,69 €","price":"0,55 €","product":"Cucina Pasta (Spaghetti u.a.)","store":"aldi","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-20","oldPrice":"2,79 €","price":"2,19 €","product":"Cucina Mini-Burrata","store":"aldi","unit":"305 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-21","oldPrice":"1,19 €","price":"0,89 €","product":"Wonnemeyer Olivenvariationen","store":"aldi","unit":"100 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-22","oldPrice":"0,59 €","price":"0,39 €","product":"Walnussbrötchen (Meine Backwelt)","store":"aldi","unit":"je Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-23","oldPrice":"1,99 €","price":"1,39 €","product":"Almare Marinierte Garnelen","store":"aldi","unit":"100 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-24","oldPrice":"1,39 €","price":"1,15 €","product":"Gut Drei Eichen Frischwurst-Aufschnitt (vom Schwein)","store":"aldi","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-25","oldPrice":"1,89 €","price":"1,29 €","product":"Golden Bridge Porridge","store":"aldi","unit":"325 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-26","oldPrice":"1,89 €","price":"1,59 €","product":"Mucci Eis-Schale","store":"aldi","unit":"1 l","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-27","oldPrice":"1,99 €","price":"1,39 €","product":"Farmer Naturals Cashew-Cranberry-Mix","store":"aldi","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-28","oldPrice":"2,59 €","price":"1,99 €","product":"Meine Kuchenwelt Mini-Madeleines oder -Kuchen","store":"aldi","unit":"240 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-29","oldPrice":"2,49 €","price":"1,99 €","product":"Farmer Naturals Walnusskerne","store":"aldi","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-30","oldPrice":"3,99 €","price":"2,99 €","product":"Meine Käsetheke Ziegenkäse, am Stück","store":"aldi","unit":"250 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-31","oldPrice":"1,19 €","price":"0,99 €","product":"Choceur Mandel- oder Nussknacker","store":"aldi","unit":"100 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-32","oldPrice":"2,49 €","price":"1,99 €","product":"Choceur Milch-Mäuse","store":"aldi","unit":"210 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-33","oldPrice":"2,99 €","price":"2,39 €","product":"Choceur Belgische Schokoladen-Meeresfrüchte","store":"aldi","unit":"250 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-34","oldPrice":"1,99 €","price":"1,49 €","product":"Choceur Schoko-Riegel","store":"aldi","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-35","oldPrice":"3,99 €","price":"2,99 €","product":"Moser Roth Trüffel-Pralinen","store":"aldi","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-36","oldPrice":"2,19 €","price":"1,69 €","product":"Choceur Schokolade","store":"aldi","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-37","oldPrice":"2,99 €","price":"2,39 €","product":"Choceur Choco und Keks","store":"aldi","unit":"300 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-38","oldPrice":"2,59 €","price":"1,89 €","product":"Moser Roth Chocolat Création oder Chocolat Délice","store":"aldi","unit":"125-150 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-39","oldPrice":"1,49 €","price":"0,69 €","product":"Pepsi oder Schwip Schwap","store":"aldi","unit":"1,25 l","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-40","oldPrice":"3,69 €","price":"1,79 €","product":"McCain Golden Longs","store":"aldi","unit":"750 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-41","oldPrice":"4,89 €","price":"2,99 €","product":"Iglo Backfisch- oder Fischstäbchen","store":"aldi","unit":"364-450 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-42","oldPrice":"1,79 €","price":"1,44 €","product":"Bergader Almzeit oder Bavaria blu","store":"aldi","unit":"150 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-43","oldPrice":"1,19 €","price":"0,89 €","product":"Paulaner Hefe-Weißbier","store":"aldi","unit":"0,5 l","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-44","oldPrice":"2,79 €","price":"1,49 €","product":"Pringles","store":"aldi","unit":"165-185 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-45","oldPrice":"2,49 €","price":"1,69 €","product":"Storck Knoppers","store":"aldi","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-46","oldPrice":"2,99 €","price":"1,99 €","product":"Milka Kekse Choco Wafer","store":"aldi","unit":"150-185 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-47","oldPrice":"3,29 €","price":"2,49 €","product":"Ferrero kinder Country","store":"aldi","unit":"211,5 g","validFrom":"07.09.","validTo":"12.09."},{"id":"aldi-48","oldPrice":"","price":"6,49 €","product":"Meine Metzgerei Hähnchen-Schnitte \"Cordon bleu Art\"","store":"aldi","unit":"750 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-49","oldPrice":"","price":"1,69 €","product":"Barilla Pasta","store":"aldi","unit":"1 kg","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-50","oldPrice":"","price":"1,19 €","product":"Funny Frisch Snack-Spezialitäten","store":"aldi","unit":"90-120 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-51","oldPrice":"","price":"6,99 €","product":"BBQ Schwenksteaks (aus dem Schweinenacken, gewürzt)","store":"aldi","unit":"kg","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-52","oldPrice":"","price":"12,99 €","product":"Meine Metzgerei Hähnchenbrustfilet Teilstücke","store":"aldi","unit":"1,5 kg","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-53","oldPrice":"","price":"4,79 €","product":"Ferrero kinder-Schokolade oder Yogurette","store":"aldi","unit":"400 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-54","oldPrice":"","price":"2,59 €","product":"Bonduelle Goldmais oder Erbsen & Möhrchen","store":"aldi","unit":"600-800 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-55","oldPrice":"","price":"0,39 €","product":"Zott Sahne-Joghurt","store":"aldi","unit":"140 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-56","oldPrice":"","price":"1,19 €","product":"Lätta Original","store":"aldi","unit":"450 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-57","oldPrice":"","price":"1,29 €","product":"Weihenstephan Butter","store":"aldi","unit":"250 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-58","oldPrice":"","price":"0,44 €","product":"Ehrmann Grand Dessert","store":"aldi","unit":"190 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-59","oldPrice":"","price":"1,39 €","product":"Ferrero Milch-Schnitte","store":"aldi","unit":"140 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-60","oldPrice":"","price":"1,99 €","product":"Mövenpick Mini-Zitronenkuchen oder -Brownies","store":"aldi","unit":"140 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-61","oldPrice":"","price":"2,99 €","product":"Mini Babybel","store":"aldi","unit":"180 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-62","oldPrice":"","price":"1,00 €","product":"Oreo Kekse","store":"aldi","unit":"154-157 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-63","oldPrice":"","price":"0,99 €","product":"Lorenz Nic Nac's","store":"aldi","unit":"110 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-64","oldPrice":"","price":"1,49 €","product":"Lorenz Saltletts","store":"aldi","unit":"100-150 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-65","oldPrice":"","price":"3,99 €","product":"Mumm Dry (Jahrgangssekt oder Alkoholfrei)","store":"aldi","unit":"0,75 l","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-66","oldPrice":"","price":"6,99 €","product":"Golden Seafood Lachsforellen-Filetseite","store":"aldi","unit":"ca. 499 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-67","oldPrice":"","price":"10,99 €","product":"Kilbeggan Irish Whiskey","store":"aldi","unit":"0,7 l","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-68","oldPrice":"28,74 €","price":"19,16 €","product":"2025 Tausendfarben Grauer Burgunder QbA (6x0,75 l, Kaufe 4+2 gratis)","store":"aldi","unit":"4,5 l","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-69","oldPrice":"14,34 €","price":"9,56 €","product":"Riesling-Chardonnay QbA (6x0,75 l, Kaufe 4+2 gratis)","store":"aldi","unit":"4,5 l","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-70","oldPrice":"","price":"1,49 €","product":"Wiesn Schmankerl Servietten-Knödel im Kochbeutel","store":"aldi","unit":"390 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-71","oldPrice":"","price":"3,99 €","product":"Wiesn Schmankerl Knusprige Grillhaxe (vom Schwein, mit Schwarte, vorgegart)","store":"aldi","unit":"500 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-72","oldPrice":"","price":"3,99 €","product":"Wiesn Schmankerl Riesen-Wiesn-Schnitzel (vom Schwein, gewürzt, 2 Stück)","store":"aldi","unit":"500 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-73","oldPrice":"","price":"2,99 €","product":"Wiesn Schmankerl Brezel-Pizza","store":"aldi","unit":"355-377 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-74","oldPrice":"","price":"1,79 €","product":"Wiesn Schmankerl Brezelino","store":"aldi","unit":"150 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-75","oldPrice":"","price":"2,99 €","product":"Wiesn Schmankerl Riesn' Germknödel (mit Zucker-Mohn-Beipack)","store":"aldi","unit":"370-560 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-76","oldPrice":"","price":"1,49 €","product":"Alpenhain Obazda","store":"aldi","unit":"125 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-77","oldPrice":"","price":"2,29 €","product":"Goldähren Mini-Laugen-Mix","store":"aldi","unit":"518 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-78","oldPrice":"","price":"1,99 €","product":"Alpenhain Back-Käse","store":"aldi","unit":"200 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-79","oldPrice":"","price":"1,99 €","product":"Erasco Eintopf","store":"aldi","unit":"800 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-80","oldPrice":"","price":"1,99 €","product":"Valess Vegetarische Vielfalt","store":"aldi","unit":"160-180 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-81","oldPrice":"","price":"1,59 €","product":"Hengstenberg Cornichons","store":"aldi","unit":"330 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-82","oldPrice":"","price":"2,49 €","product":"Wiesbauer Aufschnitt-Spezialitäten (vom Schwein)","store":"aldi","unit":"180-200 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-83","oldPrice":"","price":"5,99 €","product":"Meine Metzgerei Kalbsschnitzel","store":"aldi","unit":"240 g","validFrom":"11.09.","validTo":"12.09."},{"id":"aldi-84","oldPrice":"","price":"0,99 €","product":"King's Crown Heimische Gemüsevariationen","store":"aldi","unit":"320-330 g","validFrom":"11.09.","validTo":"12.09."},{"id":"lidl-1","oldPrice":"0,65 €","price":"0,29 €","product":"Freeway Cola","store":"lidl","unit":"1,5 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-2","oldPrice":"4,98 €","price":"3,49 €","product":"Wagner Steinofen Pizza/Flammkuchen","store":"lidl","unit":"700/600 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-3","oldPrice":"1,79 €","price":"1,39 €","product":"Kaktusfeige","store":"lidl","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-4","oldPrice":"1,49 €","price":"0,95 €","product":"Feigen","store":"lidl","unit":"4 Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-5","oldPrice":"","price":"0,55 €","product":"Grapefruit","store":"lidl","unit":"Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-6","oldPrice":"","price":"0,99 €","product":"Zucchini, lose","store":"lidl","unit":"kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-7","oldPrice":"1,39 €","price":"1,11 €","product":"Petersilie","store":"lidl","unit":"Bund","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-8","oldPrice":"1,39 €","price":"1,11 €","product":"Granatapfel","store":"lidl","unit":"Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-9","oldPrice":"1,99 €","price":"1,59 €","product":"Grüner Spitzpaprika","store":"lidl","unit":"400 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-10","oldPrice":"","price":"2,49 €","product":"Bauerngurken","store":"lidl","unit":"750 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-11","oldPrice":"","price":"2,66 €","product":"Kerrygold extra XXL","store":"lidl","unit":"400 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-12","oldPrice":"4,99 €","price":"2,99 €","product":"Milka Schokolade Großtafel","store":"lidl","unit":"Großtafel","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-13","oldPrice":"4,29 €","price":"2,99 €","product":"Capri-Sun","store":"lidl","unit":"10x0,2 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-14","oldPrice":"1,49 €","price":"0,95 €","product":"Landliebe Haltbare Landmilch","store":"lidl","unit":"1 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-15","oldPrice":"4,49 €","price":"2,99 €","product":"Langnese Magnum","store":"lidl","unit":"255/270/330 ml","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-16","oldPrice":"8,99 €","price":"5,99 €","product":"Dovgan Taschki Pelmeni/Vareniki","store":"lidl","unit":"1,5 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-17","oldPrice":"0,69 €","price":"0,59 €","product":"Combino Spaghetti","store":"lidl","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-18","oldPrice":"0,89 €","price":"0,39 €","product":"Ehrmann Almighurt","store":"lidl","unit":"150 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-19","oldPrice":"1,49 €","price":"0,99 €","product":"Ehrmann High Protein Pudding","store":"lidl","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-20","oldPrice":"3,29 €","price":"1,99 €","product":"Pick Up!","store":"lidl","unit":"140 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-21","oldPrice":"3,69 €","price":"2,22 €","product":"Mulino Bianco Gebäck","store":"lidl","unit":"200/250 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-22","oldPrice":"","price":"5,19 €","product":"Yogurette/Kinder Schokolade","store":"lidl","unit":"400 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-23","oldPrice":"3,79 €","price":"2,49 €","product":"Nestlé Minis","store":"lidl","unit":"144/167/180/185 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-24","oldPrice":"1,19 €","price":"0,88 €","product":"Valensina Kids","store":"lidl","unit":"0,33 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-25","oldPrice":"2,29 €","price":"1,99 €","product":"Mister Choc Schoko Bananen","store":"lidl","unit":"300 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-26","oldPrice":"1,19 €","price":"0,49 €","product":"Knorr Fix","store":"lidl","unit":"33/36/43/49 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-27","oldPrice":"2,39 €","price":"1,79 €","product":"Settele Maultaschen","store":"lidl","unit":"300 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-28","oldPrice":"2,39 €","price":"1,49 €","product":"Settele Dampfnudeln","store":"lidl","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-29","oldPrice":"","price":"3,29 €","product":"Hilcona Feinkost Teigwaren XXL","store":"lidl","unit":"750 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-30","oldPrice":"4,99 €","price":"2,99 €","product":"Wiltmann Salami Teller XXL","store":"lidl","unit":"200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-31","oldPrice":"","price":"0,39 €","product":"Babadağ Gazoz Erfrischungsgetränk","store":"lidl","unit":"0,33 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-32","oldPrice":"2,99 €","price":"1,99 €","product":"Bifi","store":"lidl","unit":"6x20/3x45/5x20 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-33","oldPrice":"","price":"3,59 €","product":"Nutella B-ready","store":"lidl","unit":"220 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-34","oldPrice":"1,49 €","price":"1,11 €","product":"Funny-frisch Goldfischli","store":"lidl","unit":"100 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-35","oldPrice":"1,79 €","price":"1,29 €","product":"Milram Buttermilch-Drink","store":"lidl","unit":"750 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-36","oldPrice":"","price":"0,99 €","product":"Kinder Überraschung","store":"lidl","unit":"20 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-37","oldPrice":"13,99 €","price":"9,99 €","product":"Grant's Triple Wood Blended Scotch Whisky","store":"lidl","unit":"0,7 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-38","oldPrice":"2,69 €","price":"1,99 €","product":"Hohes C Vitamin Shots","store":"lidl","unit":"0,33 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-39","oldPrice":"","price":"1,39 €","product":"Arizona Icetea XXL","store":"lidl","unit":"1,75 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-40","oldPrice":"14,99 €","price":"10,99 €","product":"Bacardi Carta Blanca & Coca-Cola","store":"lidl","unit":"Set","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-41","oldPrice":"1,59 €","price":"1,11 €","product":"Somersby Zero Apple Cider","store":"lidl","unit":"0,33 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-42","oldPrice":"1,09 €","price":"0,89 €","product":"Gerolsteiner Mineralwasser medium","store":"lidl","unit":"1,5 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-43","oldPrice":"3,49 €","price":"2,29 €","product":"Géramont Weichkäse","store":"lidl","unit":"150/200 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-44","oldPrice":"","price":"3,99 €","product":"Chef Select Gefüllte Knusperrollen XXL","store":"lidl","unit":"1 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-45","oldPrice":"","price":"3,99 €","product":"Chef Select Lasagne Bolognese XXL","store":"lidl","unit":"1,15 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-46","oldPrice":"","price":"5,59 €","product":"Grillmeister Geflügel-Bratwurst XXL","store":"lidl","unit":"720 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-47","oldPrice":"7,99 €","price":"5,99 €","product":"Rügenwalder Mühle Vegane Aufschnitt-Alternative","store":"lidl","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-48","oldPrice":"","price":"5,69 €","product":"Norwegischer Räucherlachs","store":"lidl","unit":"300 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-49","oldPrice":"3,89 €","price":"1,99 €","product":"Arla Finello XXL","store":"lidl","unit":"225 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-50","oldPrice":"2,99 €","price":"2,69 €","product":"Dovgan Körniger Frischkäse XXL","store":"lidl","unit":"350 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-51","oldPrice":"","price":"4,99 €","product":"Kinder Cards","store":"lidl","unit":"256 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-52","oldPrice":"","price":"1,11 €","product":"Surig Essig-Essenz","store":"lidl","unit":"450 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-53","oldPrice":"2,99 €","price":"1,79 €","product":"7Days Croissants","store":"lidl","unit":"185 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-54","oldPrice":"","price":"2,49 €","product":"Chef Select Jäger-Hackbraten","store":"lidl","unit":"500 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-55","oldPrice":"3,49 €","price":"2,79 €","product":"Chef Select High Protein Ready Meal","store":"lidl","unit":"400 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-56","oldPrice":"3,49 €","price":"2,49 €","product":"Rügenwalder Mühle Snack-Becher","store":"lidl","unit":"165 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-57","oldPrice":"3,49 €","price":"2,69 €","product":"8Panda Frühlingsrollen","store":"lidl","unit":"278 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-58","oldPrice":"2,79 €","price":"1,99 €","product":"Candy Floss Zuckerwatte","store":"lidl","unit":"60 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-59","oldPrice":"2,99 €","price":"1,99 €","product":"Alpro Nussdrink","store":"lidl","unit":"1 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-60","oldPrice":"2,79 €","price":"2,29 €","product":"Calypso Ocean Blue Lemonade","store":"lidl","unit":"0,473 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-61","oldPrice":"0,99 €","price":"0,79 €","product":"Bitburger Premium Pils","store":"lidl","unit":"0,568 l","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-62","oldPrice":"2,07 €","price":"1,38 €","product":"Apfeltasche","store":"lidl","unit":"3 Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-63","oldPrice":"1,17 €","price":"0,78 €","product":"Weltmeisterbrötchen","store":"lidl","unit":"3 Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-64","oldPrice":"","price":"0,98 €","product":"Bioland Vollkorn-Körner-Krusti","store":"lidl","unit":"3 Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-65","oldPrice":"","price":"0,99 €","product":"Pizza Donut Margherita","store":"lidl","unit":"Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-66","oldPrice":"","price":"13,97 €","product":"Metzgerfrisch Premium Lamm-Filets XXL","store":"lidl","unit":"499 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-67","oldPrice":"","price":"3,99 €","product":"Metzgerfrisch Frisches Schweine-Hackfleisch XXL","store":"lidl","unit":"1 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-68","oldPrice":"","price":"4,79 €","product":"Deluxe Barbarie Entenbrustfilet","store":"lidl","unit":"299 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-69","oldPrice":"","price":"8,49 €","product":"Chicken-Crispies","store":"lidl","unit":"1 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-70","oldPrice":"1,47 €","price":"0,98 €","product":"Buttercroissant","store":"lidl","unit":"3 Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-71","oldPrice":"2,55 €","price":"1,70 €","product":"Laugeneck","store":"lidl","unit":"3 Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-72","oldPrice":"","price":"0,59 €","product":"Nuss Nougat Berliner","store":"lidl","unit":"Stück","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-73","oldPrice":"5,49 €","price":"3,99 €","product":"Metzgerfrisch Premium Frische Maispoularde","store":"lidl","unit":"kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-74","oldPrice":"3,19 €","price":"2,22 €","product":"Metzgerfrisch Puten-Hacksteaks","store":"lidl","unit":"320 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-75","oldPrice":"","price":"15,99 €","product":"Fischerstolz Norwegische Lachsfilet-Portionen XXL","store":"lidl","unit":"1 kg","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-76","oldPrice":"5,23 €","price":"4,49 €","product":"Grillmeister Südamerikanisches Rindersteak","store":"lidl","unit":"299 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-77","oldPrice":"","price":"5,19 €","product":"Metzgerfrisch Frische Hähnchen-Brustfilets","store":"lidl","unit":"600 g","validFrom":"07.09.","validTo":"12.09."},{"id":"lidl-78","oldPrice":"","price":"3,99 €","product":"1001 Delights Hähnchen-Kebab","store":"lidl","unit":"400 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-79","oldPrice":"","price":"5,99 €","product":"1001 Delights Hähnchen-Geschnetzeltes","store":"lidl","unit":"750 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-80","oldPrice":"5,99 €","price":"5,39 €","product":"1001 Delights Kebab Style-Pfanne","store":"lidl","unit":"600 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-81","oldPrice":"","price":"1,39 €","product":"1001 Delights Dönerbrot","store":"lidl","unit":"260 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-82","oldPrice":"","price":"2,49 €","product":"1001 Delights Pide","store":"lidl","unit":"400 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-83","oldPrice":"","price":"2,49 €","product":"1001 Delights Fertiggericht","store":"lidl","unit":"275/540 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-84","oldPrice":"","price":"1,99 €","product":"1001 Delights Kebabsauce","store":"lidl","unit":"250 ml","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-85","oldPrice":"","price":"3,59 €","product":"1001 Delights Sucuk","store":"lidl","unit":"240/300 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-86","oldPrice":"","price":"1,79 €","product":"1001 Delights Falafel","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-87","oldPrice":"2,99 €","price":"2,49 €","product":"1001 Delights Dürüm","store":"lidl","unit":"1,2 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-88","oldPrice":"","price":"0,99 €","product":"1001 Delights Hummus XXL","store":"lidl","unit":"250 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-89","oldPrice":"","price":"2,19 €","product":"1001 Delights Sahnejoghurt","store":"lidl","unit":"1 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-90","oldPrice":"","price":"5,99 €","product":"1001 Delights Ziegenkäse","store":"lidl","unit":"931 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-91","oldPrice":"3,19 €","price":"1,99 €","product":"Gazi Schaf-/Ziegenkäse","store":"lidl","unit":"150 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-92","oldPrice":"","price":"4,49 €","product":"Gazi Tulum Nomadenkäse","store":"lidl","unit":"440 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-93","oldPrice":"","price":"6,49 €","product":"Ömür Hirtenkäse","store":"lidl","unit":"1,5 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-94","oldPrice":"2,59 €","price":"1,99 €","product":"Dilek Çiğ Köfte","store":"lidl","unit":"384 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-95","oldPrice":"","price":"10,99 €","product":"Hirtenstolz Lamm Vorderviertel","store":"lidl","unit":"kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-96","oldPrice":"","price":"3,79 €","product":"1001 Delights Mini-Käseschnecken","store":"lidl","unit":"1 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-97","oldPrice":"","price":"5,55 €","product":"Suntat Çıtır Sosis Geflügelwiener","store":"lidl","unit":"700 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-98","oldPrice":"","price":"3,29 €","product":"Suntat Tosun Pastirma Rinderformschinken","store":"lidl","unit":"100 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-99","oldPrice":"","price":"4,99 €","product":"1001 Delights Zupfkäse","store":"lidl","unit":"750 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-100","oldPrice":"3,99 €","price":"3,49 €","product":"Suntat Tel Peyniri Zupfkäse","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-101","oldPrice":"5,49 €","price":"3,99 €","product":"Gazi Kaşar Peyniri Schnittkäse","store":"lidl","unit":"400 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-102","oldPrice":"","price":"7,99 €","product":"1001 Delights Sonnenblumenöl","store":"lidl","unit":"5 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-103","oldPrice":"4,29 €","price":"3,29 €","product":"Dilek Getrocknete Früchte","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-104","oldPrice":"","price":"5,99 €","product":"Alesto Pistazien XXL","store":"lidl","unit":"500 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-105","oldPrice":"","price":"2,99 €","product":"Alesto Cashewkerne XXL","store":"lidl","unit":"250 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-106","oldPrice":"","price":"5,99 €","product":"Alesto Walnusskerne XXL","store":"lidl","unit":"500 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-107","oldPrice":"","price":"1,99 €","product":"Alesto Cranberries XXL","store":"lidl","unit":"250 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-108","oldPrice":"23,99 €","price":"16,99 €","product":"Efe Raki Gold","store":"lidl","unit":"0,7 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-109","oldPrice":"","price":"4,99 €","product":"Deluxe Törtchen","store":"lidl","unit":"150 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-110","oldPrice":"","price":"5,99 €","product":"Özyörem Käse-Grillwurst","store":"lidl","unit":"500 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-111","oldPrice":"","price":"2,79 €","product":"1001 Delights Geflügelfleischbällchen","store":"lidl","unit":"280 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-112","oldPrice":"","price":"2,49 €","product":"1001 Delights Steinofenpizza","store":"lidl","unit":"391/395 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-113","oldPrice":"","price":"2,99 €","product":"1001 Delights Börek-Rolls","store":"lidl","unit":"320 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-114","oldPrice":"","price":"1,99 €","product":"Gazi Grill- und Pfannenkäse","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-115","oldPrice":"","price":"1,99 €","product":"Dilek Teigblätter","store":"lidl","unit":"500 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-116","oldPrice":"","price":"1,99 €","product":"Suntat Gefüllte Weinblätter","store":"lidl","unit":"400 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-117","oldPrice":"","price":"0,99 €","product":"Dilek Gerösteter Mais","store":"lidl","unit":"125 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-118","oldPrice":"","price":"1,49 €","product":"Dilek Twist'n'Taste Waffelröllchen","store":"lidl","unit":"150 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-119","oldPrice":"","price":"1,99 €","product":"1001 Delights Kürbiskerne","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-120","oldPrice":"","price":"0,99 €","product":"1001 Delights Sonnenblumenkerne","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-121","oldPrice":"3,69 €","price":"2,79 €","product":"Dilek Doppelkeks","store":"lidl","unit":"300 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-122","oldPrice":"","price":"1,99 €","product":"1001 Delights Gelee-Würfel","store":"lidl","unit":"400 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-123","oldPrice":"","price":"1,99 €","product":"Mekka Datteln","store":"lidl","unit":"180 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-124","oldPrice":"","price":"3,99 €","product":"1001 Delights Baklava-Sortiment","store":"lidl","unit":"290 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-125","oldPrice":"3,89 €","price":"2,99 €","product":"Dilek Helva","store":"lidl","unit":"360 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-126","oldPrice":"","price":"1,25 €","product":"Deutsche Möhren","store":"lidl","unit":"2 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-127","oldPrice":"","price":"0,99 €","product":"Deutscher Mini Romana Salat","store":"lidl","unit":"2 Stück","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-128","oldPrice":"","price":"0,55 €","product":"Kiwi Gold, lose","store":"lidl","unit":"Stück","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-129","oldPrice":"","price":"1,99 €","product":"Pfirsiche","store":"lidl","unit":"700 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-130","oldPrice":"","price":"3,99 €","product":"Frische Schweine Schälrippe","store":"lidl","unit":"kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-131","oldPrice":"","price":"4,99 €","product":"Metzgerfrisch Hähnchen-Hackfleisch","store":"lidl","unit":"800 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-132","oldPrice":"","price":"4,99 €","product":"Metzgerfrisch Frisches Schweine-Geschnetzeltes","store":"lidl","unit":"800 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-133","oldPrice":"","price":"6,99 €","product":"Metzgerfrisch Frische Hähnchenflügel","store":"lidl","unit":"1,5 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-134","oldPrice":"7,99 €","price":"6,99 €","product":"Van Volxem & Friends Handverlesen Riesling","store":"lidl","unit":"0,75 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-135","oldPrice":"","price":"8,49 €","product":"Grillmeister Putenbrustschnitzel","store":"lidl","unit":"1 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-136","oldPrice":"","price":"5,49 €","product":"Fischerstolz MSC Knusper-Backfisch","store":"lidl","unit":"560 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-137","oldPrice":"","price":"10,49 €","product":"Metzgerfrisch Rinder-Minutensteaks","store":"lidl","unit":"640 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-138","oldPrice":"","price":"6,49 €","product":"Grillmeister Cevapcici","store":"lidl","unit":"800 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-139","oldPrice":"3,39 €","price":"1,99 €","product":"Milka Riegel","store":"lidl","unit":"155/185 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-140","oldPrice":"17,49 €","price":"11,99 €","product":"Melitta Barista","store":"lidl","unit":"1 kg","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-141","oldPrice":"3,79 €","price":"1,99 €","product":"Nestlé Schöller Eis","store":"lidl","unit":"5x70 ml","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-142","oldPrice":"3,99 €","price":"1,99 €","product":"Langnese Cremissimo Eis","store":"lidl","unit":"1,3 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-143","oldPrice":"1,49 €","price":"0,89 €","product":"Monster Energy Drink","store":"lidl","unit":"0,5 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-144","oldPrice":"2,49 €","price":"0,99 €","product":"Bayernkrone Butter","store":"lidl","unit":"250 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-145","oldPrice":"1,99 €","price":"1,49 €","product":"Wiesbauer Fleischwurstaufschnitt","store":"lidl","unit":"80/100 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-146","oldPrice":"","price":"8,49 €","product":"Coca-Cola","store":"lidl","unit":"18x0,33 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-147","oldPrice":"","price":"3,33 €","product":"Danone Actimel XXL","store":"lidl","unit":"12x100 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-148","oldPrice":"","price":"5,39 €","product":"Kinder Riegel/Duplo","store":"lidl","unit":"378/327,6 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-149","oldPrice":"2,69 €","price":"1,99 €","product":"Malibu Cocktails","store":"lidl","unit":"0,25 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-150","oldPrice":"1,59 €","price":"1,29 €","product":"Mr. Tom Riegel","store":"lidl","unit":"4x40 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-151","oldPrice":"","price":"1,11 €","product":"Funny-Frisch Ofen Chips","store":"lidl","unit":"115 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-152","oldPrice":"13,99 €","price":"9,99 €","product":"Ramazzotti Amaro","store":"lidl","unit":"0,7 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-153","oldPrice":"2,29 €","price":"1,11 €","product":"Landliebe Joghurt","store":"lidl","unit":"500 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-154","oldPrice":"3,49 €","price":"1,99 €","product":"Iglo Rahm-Spinat","store":"lidl","unit":"750 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-155","oldPrice":"2,99 €","price":"1,49 €","product":"Kerrygold Irische Käsescheiben","store":"lidl","unit":"120/130 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-156","oldPrice":"1,99 €","price":"1,49 €","product":"Herta Schinken","store":"lidl","unit":"100 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-157","oldPrice":"","price":"0,99 €","product":"Arla Buko Frischkäse","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-158","oldPrice":"","price":"2,29 €","product":"Nutella","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-159","oldPrice":"6,29 €","price":"3,49 €","product":"Celebrations","store":"lidl","unit":"230 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-160","oldPrice":"","price":"4,89 €","product":"Kinder Country","store":"lidl","unit":"376 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-161","oldPrice":"","price":"2,99 €","product":"Nutella Biscuits","store":"lidl","unit":"166 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-162","oldPrice":"5,99 €","price":"3,99 €","product":"Maltesers","store":"lidl","unit":"300 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-163","oldPrice":"","price":"4,59 €","product":"Kinder Bueno","store":"lidl","unit":"215 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-164","oldPrice":"3,99 €","price":"1,99 €","product":"Nestlé After Eight","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-165","oldPrice":"1,89 €","price":"1,49 €","product":"Ritz Crackers","store":"lidl","unit":"200 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-166","oldPrice":"","price":"3,99 €","product":"Kinder Schoko-Bons","store":"lidl","unit":"225 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-167","oldPrice":"","price":"0,89 €","product":"Staropramen","store":"lidl","unit":"0,5 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-168","oldPrice":"2,99 €","price":"1,99 €","product":"Havana Club to Go","store":"lidl","unit":"0,33 l","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-169","oldPrice":"","price":"3,49 €","product":"Kinder Crunchy Cookies","store":"lidl","unit":"136 g","validFrom":"10.09.","validTo":"12.09."},{"id":"lidl-170","oldPrice":"","price":"9,99 €","product":"Metzgerfrisch Premium T-Bone Steak","store":"lidl","unit":"440 g","validFrom":"11.09.","validTo":"12.09."},{"id":"lidl-171","oldPrice":"1,99 €","price":"0,99 €","product":"Lay's Chips","store":"lidl","unit":"150/110 g","validFrom":"11.09.","validTo":"12.09."},{"id":"lidl-172","oldPrice":"9,99 €","price":"6,49 €","product":"Dallmayr Filterkaffee","store":"lidl","unit":"500 g","validFrom":"11.09.","validTo":"12.09."},{"id":"lidl-173","oldPrice":"1,79 €","price":"1,11 €","product":"Granini Die Limo","store":"lidl","unit":"1 l","validFrom":"11.09.","validTo":"12.09."},{"id":"lidl-174","oldPrice":"6,49 €","price":"3,69 €","product":"Mumm Dry Jahrgangssekt","store":"lidl","unit":"0,75 l","validFrom":"11.09.","validTo":"12.09."}],"updatedAt":"2026-09-07T13:17:11.000Z","source":"Alle drei Händler wurden diese Woche aus den offiziellen Online-Prospekten extrahiert: Rewe und Aldi Süd per vollständiger visueller Auswertung des echten Prospekt-PDFs bzw. der Prospekt-Seitenbilder (Publitas-Viewer), Lidl per vollständiger visueller Auswertung aller Prospektseiten über die offizielle Lidl-Flyer-Datenquelle. Keine Drittanbieter-Zusammenfassungen mehr verwendet — dadurch sind Aldi (84 statt vorher 30) und Lidl (174 statt vorher 17) jetzt genauso vollständig wie Rewe."};
+
+  function showSetupPanel(){
+    var panel = document.getElementById("setup-panel");
+    if (panel) panel.hidden = false;
+  }
+  function hideSetupPanel(){
+    var panel = document.getElementById("setup-panel");
+    if (panel) panel.hidden = true;
+  }
+  var setupDismissBtn = document.getElementById("setup-dismiss");
+  if (setupDismissBtn) setupDismissBtn.addEventListener("click", function(){
+    hideSetupPanel();
+    // Ohne Datenbank/Anmeldung geht es nur lokal weiter, damit man die Seite trotzdem ansehen kann.
+    var appShell = document.getElementById("app-shell");
+    if (appShell) appShell.hidden = false;
+  });
+
+  // ---------------- Anmeldung (Firebase Auth, E-Mail-Link) ----------------
+
+  var loginPanelEl, loginEmailInput, loginSendBtn, loginStatusEl, appShellEl, logoutBtnEl;
+
+  function initAuthUI(){
+    loginPanelEl = document.getElementById("login-panel");
+    loginEmailInput = document.getElementById("login-email");
+    loginSendBtn = document.getElementById("login-send");
+    loginStatusEl = document.getElementById("login-status");
+    appShellEl = document.getElementById("app-shell");
+    logoutBtnEl = document.getElementById("logout-btn");
+
+    loginSendBtn.addEventListener("click", sendLoginLink);
+    loginEmailInput.addEventListener("keydown", function(e){
+      if (e.key === "Enter"){ e.preventDefault(); sendLoginLink(); }
+    });
+    if (logoutBtnEl){
+      logoutBtnEl.addEventListener("click", function(){
+        firebase.auth().signOut().catch(function(){});
+      });
+    }
+  }
+
+  function showLoginStatus(text){
+    if (!loginStatusEl) return;
+    loginStatusEl.textContent = text;
+    loginStatusEl.hidden = false;
+  }
+
+  function sendLoginLink(){
+    var email = loginEmailInput.value.trim();
+    if (!email) return;
+    var actionCodeSettings = { url: window.location.href, handleCodeInApp: true };
+    loginSendBtn.disabled = true;
+    firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings).then(function(){
+      try { localStorage.setItem("mvb-login-email", email); } catch (e) {}
+      showLoginStatus("Link gesendet — schau in dein Postfach (" + email + ") und öffne den Link auf diesem Gerät.");
+    }).catch(function(err){
+      showLoginStatus("Konnte den Link nicht senden: " + (err && err.message ? err.message : err));
+    }).finally(function(){
+      loginSendBtn.disabled = false;
+    });
+  }
+
+  function completeLoginFromLinkIfNeeded(){
+    var auth = firebase.auth();
+    if (!auth.isSignInWithEmailLink(window.location.href)) return;
+    var email;
+    try { email = localStorage.getItem("mvb-login-email"); } catch (e) {}
+    if (!email) email = window.prompt("Zur Bestätigung: mit welcher E-Mail-Adresse hast du dich angemeldet?");
+    if (!email) return;
+    auth.signInWithEmailLink(email, window.location.href).then(function(){
+      try { localStorage.removeItem("mvb-login-email"); } catch (e) {}
+      try { window.history.replaceState({}, document.title, window.location.pathname); } catch (e) {}
+    }).catch(function(err){
+      showLoginStatus("Anmeldung über den Link fehlgeschlagen: " + (err && err.message ? err.message : err));
+    });
+  }
+
+  // ---------------- debug/error surface ----------------
+  // Damit sich JS-Fehler (die sonst lautlos alles abbrechen) direkt auf der Seite zeigen,
+  // statt dass man rätseln muss, warum "nichts passiert".
+  function showDebugError(msg){
+    try {
+      var el = document.getElementById("debug-banner");
+      if (!el) return;
+      el.hidden = false;
+      var line = document.createElement("div");
+      line.textContent = new Date().toLocaleTimeString("de-DE") + " — " + msg;
+      el.appendChild(line);
+      if (!el.querySelector("button")){
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = "Fehleranzeige schließen";
+        btn.addEventListener("click", function(){ el.hidden = true; });
+        el.insertBefore(btn, el.firstChild);
+      }
+    } catch (e) {}
+  }
+  window.addEventListener("error", function(e){
+    showDebugError("Fehler: " + (e.message || "unbekannt") + " (Zeile " + (e.lineno || "?") + ")");
+  });
+  window.addEventListener("unhandledrejection", function(e){
+    var reason = e && e.reason;
+    showDebugError("Promise-Fehler: " + (reason && reason.message ? reason.message : String(reason)));
+  });
+
+  var STORE_ORDER = ["rewe","aldi","lidl"];
+  var STORE_LABEL = {rewe:"Rewe", aldi:"Aldi Süd", lidl:"Lidl"};
+
+  var CATEGORY_ORDER = ["obst_gemuese","fleisch_fisch","molkerei","tiefkuehl","getraenke","suess_vorrat","drogerie"];
+  var CATEGORY_LABEL = {
+    obst_gemuese:  "🍎 Obst & Gemüse",
+    fleisch_fisch: "🥩 Fleisch, Wurst & Fisch",
+    molkerei:      "🧀 Molkerei, Käse & Eier",
+    tiefkuehl:     "❄️ Tiefkühl & Fertiggerichte",
+    getraenke:     "🥤 Getränke",
+    suess_vorrat:  "🍫 Süßes, Snacks & Vorräte",
+    drogerie:      "🧴 Drogerie, Haushalt & Sonstiges"
+  };
+  var CATEGORY_KEYWORDS = {
+    obst_gemuese: ["apfel","äpfel","birne","banane","orange","mandarine","clementine","zitrone","limette","traube","beere","erdbeer","himbeer","heidelbeer","brombeer","kirsch","pflaume","aprikose","pfirsich","nektarine","melone","ananas","kiwi","avocado","mango","granatapfel","kartoffel","tomate","gurke","salat","paprika","zwiebel","knoblauch","karotte","möhre","brokkoli","blumenkohl","kohl","zucchini","aubergine","pilz","champignon","spargel","spinat","lauch","porree","rettich","radieschen","sellerie","fenchel","kürbis","mais","erbse","bohne","obst","gemüse","kräuter","petersilie","basilikum","schnittlauch","ingwer","rucola","feldsalat"],
+    fleisch_fisch: ["hackfleisch","rind","schwein","hähnchen","huhn","pute","geflügel","wurst","schinken","salami","speck","bacon","bratwurst","wiener","lyoner","mett","steak","filet","kotelett","gulasch","fisch","lachs","thunfisch","garnele","shrimp","hering","forelle","kabeljau","seelachs","matjes","leberkäse","kassler","cevapcici","döner","grillfleisch","aufschnitt"],
+    molkerei: ["milch","joghurt","quark","käse","butter","margarine","sahne","schmand","creme fraiche","frischkäse","mozzarella","gouda","emmentaler","feta","parmesan"," ei "," eier","eier ","pudding","skyr","buttermilch","kondensmilch","kefir"],
+    tiefkuehl: ["tiefkühl","tiefgekühlt","tk-","pizza","pommes","fischstäbchen","gefroren","eiscreme","fertiggericht","lasagne"],
+    getraenke: ["wasser","mineralwasser","saft","cola","limonade","bier","wein","sekt","prosecco","spirituose","whisky","wodka","gin","rum","likör","kaffee","tee","energydrink","softdrink","schorle","smoothie","getränk"],
+    suess_vorrat: ["schokolade","keks","chips","nuss","nüsse","riegel","bonbon","gummibär","müsli","cerealien","marmelade","honig","nutella","mehl","zucker","reis","nudel","pasta","spaghetti","öl","essig","gewürz","sauce","soße","ketchup","senf","konserve","dose","suppe","brühe","snack","cracker","popcorn","brot","brötchen","kuchen","gebäck","waffel","dessert"],
+    drogerie: ["shampoo","duschgel","seife","zahnpasta","zahnbürste","deo","rasier","windel","toilettenpapier","küchenrolle","waschmittel","spülmittel","reiniger","putztuch","batterie","kosmetik","creme","lotion","hygiene","taschentuch","müllbeutel","weichspüler"]
+  };
+  function categorizeProduct(item){
+    if (item && item.category && CATEGORY_LABEL[item.category]) return item.category;
+    var name = " " + normalize(item && item.product) + " ";
+    for (var i = 0; i < CATEGORY_ORDER.length - 1; i++){
+      var cat = CATEGORY_ORDER[i];
+      var words = CATEGORY_KEYWORDS[cat];
+      for (var j = 0; j < words.length; j++){
+        if (name.indexOf(words[j]) !== -1) return cat;
+      }
+    }
+    return "drogerie";
+  }
+
+  // Erkennt Bio-Produkte am Namen (Bio, Öko, Demeter, Bioland, Naturland als eigenes Wort/
+  // Wortteil, auch mit Bindestrich wie "Bio-Vollmilch"), da die Angebote kein eigenes Feld dafür haben.
+  var BIO_PATTERN = /(^|[^a-zäöüß])(bio|öko|demeter|bioland|naturland)(?![a-zäöüß])/i;
+  function isBioProduct(item){
+    return !!(item && item.product && BIO_PATTERN.test(item.product));
+  }
+
+  // Grobe Themen-Gruppen für die Merkliste: trägt jemand einen Oberbegriff ein
+  // (z. B. "Backfisch"), sollen alle passenden Angebote auftauchen, auch wenn
+  // der genaue Produktname (z. B. "Lachsfilet") den Begriff nicht enthält.
+  var WATCH_GROUPS = [
+    { triggers: ["fisch","meeresfrüchte","seafood"],
+      keywords: ["fisch","lachs","thunfisch","garnele","shrimp","hering","forelle","kabeljau","seelachs","matjes","krabbe","muschel","tintenfisch","calamari","scholle","zander","dorade","kaviar","scampi","surimi"] },
+    { triggers: ["fleisch","rind","schwein","geflügel","hähnchen","huhn","pute","wurst"],
+      keywords: ["hackfleisch","rind","schwein","hähnchen","huhn","pute","geflügel","wurst","schinken","salami","speck","bacon","bratwurst","wiener","lyoner","mett","steak","filet","kotelett","gulasch","leberkäse","kassler","cevapcici","döner","grillfleisch","aufschnitt"] },
+    { triggers: ["obst","früchte"],
+      keywords: ["apfel","äpfel","birne","banane","orange","mandarine","clementine","zitrone","limette","traube","beere","erdbeer","himbeer","heidelbeer","brombeer","kirsch","pflaume","aprikose","pfirsich","nektarine","melone","ananas","kiwi","avocado","mango","granatapfel","feige"] },
+    { triggers: ["gemüse"],
+      keywords: ["kartoffel","tomate","gurke","salat","paprika","zwiebel","knoblauch","karotte","möhre","brokkoli","blumenkohl","kohl","zucchini","aubergine","pilz","champignon","spargel","spinat","lauch","porree","rettich","radieschen","sellerie","fenchel","kürbis","mais","erbse","bohne"] },
+    { triggers: ["käse"],
+      keywords: ["käse","gouda","emmentaler","feta","parmesan","mozzarella","frischkäse","camembert","brie","appenzeller","chavroux","burrata"] },
+    { triggers: ["milchprodukte","molkerei"],
+      keywords: ["milch","joghurt","quark","butter","margarine","sahne","schmand","frischkäse","pudding","skyr","buttermilch","kondensmilch","kefir"] },
+    { triggers: ["süßigkeiten","süßes","naschen","snacks"],
+      keywords: ["schokolade","keks","chips","nuss","nüsse","riegel","bonbon","gummibär","cracker","popcorn","waffel","dessert"] },
+    { triggers: ["getränke","trinken"],
+      keywords: ["wasser","mineralwasser","saft","cola","limonade","bier","wein","sekt","prosecco","spirituose","whisky","wodka","gin","rum","likör","kaffee","tee","energydrink","softdrink","schorle","smoothie","getränk"] },
+    { triggers: ["tiefkühl","tiefkühlkost","tk"],
+      keywords: ["tiefkühl","tiefgekühlt","tk-","pizza","pommes","fischstäbchen","gefroren","eiscreme","fertiggericht","lasagne"] },
+    { triggers: ["drogerie","haushalt","hygiene","putzmittel"],
+      keywords: ["shampoo","duschgel","seife","zahnpasta","zahnbürste","deo","rasier","windel","toilettenpapier","küchenrolle","waschmittel","spülmittel","reiniger","putztuch","batterie","kosmetik","creme","lotion","hygiene","taschentuch","müllbeutel","weichspüler"] }
+  ];
+
+  var state = {
+    offers: {items: [], updatedAt: null, source: null, aldiNote: null},
+    shoppingList: {items: []},
+    watchlist: {items: []}
+  };
+
+  var db = null;
+  var refs = {};
+
+  // Snapshot-Objekte, die aus der Datenbank kommen (state.offers/shoppingList/watchlist),
+  // sind schreibgeschützt (Object.freeze o. ä.) — direktes Zuweisen an .items wirft im
+  // strict mode "Cannot assign to read only property". Deshalb hier IMMER ein frisches
+  // Objekt bauen statt die vorhandenen Felder zu mutieren.
+  function setItems(bucket, items){
+    state[bucket] = Object.assign({}, state[bucket], { items: items });
+  }
+
+  function uid(){
+    // crypto.randomUUID() existing as a property doesn't guarantee calling it won't throw
+    // (e.g. outside a context some embedded mobile webviews treat as "secure") — guard it,
+    // since every add-to-list/add-to-watch action depends on this succeeding.
+    try {
+      if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    } catch (e) {}
+    return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+  }
+
+  function escapeHtml(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function normalize(s){ return String(s||"").toLowerCase().trim(); }
+
+  function textMatches(watchName, productName){
+    var w = normalize(watchName), p = normalize(productName);
+    if (!w || !p) return false;
+    if (p.indexOf(w) !== -1 || w.indexOf(p) !== -1) return true;
+    // Themen-Suche nur bei einer EXAKTEN Übereinstimmung mit dem Oberbegriff selbst
+    // (z. B. genau "Fisch" → zeigt alle Fisch-Angebote). Ein abgeleitetes/zusammengesetztes
+    // Wort wie "Backfisch" ist damit NICHT gemeint und bleibt bei der reinen Textsuche
+    // (findet also nur Angebote, die "Backfisch" auch wirklich im Namen tragen).
+    for (var i = 0; i < WATCH_GROUPS.length; i++){
+      var group = WATCH_GROUPS[i];
+      if (group.triggers.indexOf(w) === -1) continue;
+      if (group.keywords.some(function(k){ return p.indexOf(k) !== -1; })) return true;
+    }
+    return false;
+  }
+
+  // ---------------- theme toggle ----------------
+
+  var THEME_KEY = "mvb-theme";
+  function systemPrefersDark(){
+    try { return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches); }
+    catch (e) { return false; }
+  }
+  function applyThemeIcon(){
+    var btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    var explicit = document.documentElement.getAttribute("data-theme");
+    var isDark = explicit ? explicit === "dark" : systemPrefersDark();
+    btn.textContent = isDark ? "☀️" : "🌙";
+    btn.setAttribute("aria-label", isDark ? "Zu hellem Modus wechseln" : "Zu dunklem Modus wechseln");
+  }
+  function setTheme(mode){
+    if (mode) document.documentElement.setAttribute("data-theme", mode);
+    else document.documentElement.removeAttribute("data-theme");
+    try {
+      if (mode) localStorage.setItem(THEME_KEY, mode); else localStorage.removeItem(THEME_KEY);
+    } catch (e) {}
+    applyThemeIcon();
+  }
+  applyThemeIcon();
+  var themeToggleBtn = document.getElementById("theme-toggle");
+  if (themeToggleBtn){
+    themeToggleBtn.addEventListener("click", function(){
+      var current = document.documentElement.getAttribute("data-theme");
+      var isDark = current ? current === "dark" : systemPrefersDark();
+      setTheme(isDark ? "light" : "dark");
+    });
+  }
+
+  function formatUpdated(iso){
+    if (!iso) return "Noch keine Angebote hinterlegt";
+    try{
+      var d = new Date(iso);
+      var datePart = d.toLocaleDateString("de-DE", {day:"2-digit", month:"2-digit"});
+      var timePart = d.toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"});
+      return "Aktualisiert " + datePart + ", " + timePart + " Uhr";
+    }catch(e){ return "Aktualisiert"; }
+  }
+
+  // ---------------- persistence ----------------
+
+  function persistOffers(){
+    if (!db) return render();
+    refs.offers.set(state.offers).catch(function(){});
+  }
+  function persistList(){
+    if (!db) return render();
+    refs.list.set(state.shoppingList).catch(function(){});
+  }
+  function persistWatch(){
+    if (!db) return render();
+    refs.watch.set(state.watchlist).catch(function(){});
+  }
+
+  // ---------------- tabs ----------------
+
+  var tabs = document.getElementById("tabs");
+  var panels = {
+    offers: document.getElementById("panel-offers"),
+    list: document.getElementById("panel-list"),
+    watch: document.getElementById("panel-watch"),
+    prospekte: document.getElementById("panel-prospekte")
+  };
+  tabs.addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-tab]");
+    if (!btn) return;
+    activateTab(btn.dataset.tab);
+  });
+  function activateTab(name){
+    Object.keys(panels).forEach(function(k){
+      panels[k].hidden = (k !== name);
+    });
+    tabs.querySelectorAll("button").forEach(function(b){
+      b.setAttribute("aria-selected", b.dataset.tab === name ? "true" : "false");
+    });
+  }
+  document.getElementById("match-chip").addEventListener("click", function(){
+    activateTab("watch");
+  });
+
+  document.getElementById("store-grid").addEventListener("click", function(e){
+    var addBtn = e.target.closest('[data-add-id]');
+    if (addBtn && !addBtn.disabled){
+      try {
+        var id = addBtn.dataset.addId;
+        var item = (state.offers.items || []).find(function(i){ return i.id === id; });
+        if (item){
+          var already = (state.shoppingList.items || []).some(function(i){ return normalize(i.name) === normalize(item.product); });
+          if (!already){
+            setItems("shoppingList", (state.shoppingList.items || []).concat([{
+              id: uid(), name: item.product, checked:false, addedAt: new Date().toISOString()
+            }]));
+            persistList();
+          }
+        }
+      } catch (err) { showDebugError("Zettel-Button: " + (err && err.message ? err.message : err)); }
+      addBtn.textContent = "✓ Auf dem Zettel";
+      addBtn.classList.add("added");
+      addBtn.disabled = true;
+      return;
+    }
+    var watchBtn = e.target.closest('[data-watch-name]');
+    if (watchBtn && !watchBtn.disabled){
+      try {
+      var productName = watchBtn.dataset.watchName;
+      var alreadyWatched = (state.watchlist.items || []).some(function(w){ return textMatches(w.name, productName); });
+      if (!alreadyWatched){
+        setItems("watchlist", (state.watchlist.items || []).concat([{
+          id: uid(), name: productName, note: "", addedAt: new Date().toISOString()
+        }]));
+        persistWatch();
+      }
+      } catch (err) { showDebugError("Beobachten-Button (Karte): " + (err && err.message ? err.message : err)); }
+      watchBtn.textContent = "🔔 Beobachtet";
+      watchBtn.classList.add("watching");
+      watchBtn.disabled = true;
+    }
+  });
+
+  // ---------------- render: offers ----------------
+
+  function offerMatches(item){
+    return state.watchlist.items.some(function(w){ return textMatches(w.name, item.product); });
+  }
+
+  // ---------------- filter panel (Markt/Kategorie/Bio gebündelt hinter einem Filter-Button,
+  // statt mehrerer Reihen dauerhaft sichtbarer Filterzeilen) ----------------
+
+  var filterToggleEl = document.getElementById("filter-toggle");
+  var filterPanelEl = document.getElementById("filter-panel");
+  var filterBadgeEl = document.getElementById("filter-badge");
+  var filterResetEl = document.getElementById("filter-reset");
+
+  function openFilterPanel(){
+    filterPanelEl.hidden = false;
+    filterToggleEl.setAttribute("aria-expanded", "true");
+  }
+  function closeFilterPanel(){
+    filterPanelEl.hidden = true;
+    filterToggleEl.setAttribute("aria-expanded", "false");
+  }
+  filterToggleEl.addEventListener("click", function(e){
+    e.stopPropagation();
+    if (filterPanelEl.hidden) openFilterPanel(); else closeFilterPanel();
+  });
+  filterPanelEl.addEventListener("click", function(e){ e.stopPropagation(); });
+  document.addEventListener("click", function(){
+    if (!filterPanelEl.hidden) closeFilterPanel();
+  });
+
+  function updateFilterMeta(){
+    var activeCount = (activeStore ? 1 : 0) + (activeCategory ? 1 : 0) + (activeBioOnly ? 1 : 0);
+    if (activeCount > 0){
+      filterBadgeEl.hidden = false;
+      filterBadgeEl.textContent = String(activeCount);
+      filterResetEl.hidden = false;
+    } else {
+      filterBadgeEl.hidden = true;
+      filterResetEl.hidden = true;
+    }
+  }
+
+  var activeStore = "";
+  var storeFilterEl = document.getElementById("store-filter");
+  storeFilterEl.addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-store]");
+    if (!btn) return;
+    activeStore = btn.dataset.store;
+    storeFilterEl.querySelectorAll("button").forEach(function(b){
+      b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+    });
+    updateFilterMeta();
+    renderOffers();
+  });
+
+  var activeCategory = "";
+  var categoryFilterEl = document.getElementById("category-filter");
+  (function buildCategoryFilter(){
+    var html = '<button type="button" data-category="" aria-pressed="true">Alle Kategorien</button>';
+    CATEGORY_ORDER.forEach(function(cat){
+      html += '<button type="button" data-category="' + cat + '" aria-pressed="false">' + CATEGORY_LABEL[cat] + '</button>';
+    });
+    categoryFilterEl.innerHTML = html;
+  })();
+  categoryFilterEl.addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-category]");
+    if (!btn) return;
+    activeCategory = btn.dataset.category;
+    categoryFilterEl.querySelectorAll("button").forEach(function(b){
+      b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+    });
+    updateFilterMeta();
+    renderOffers();
+  });
+
+  var activeSearch = "";
+  var searchInputEl = document.getElementById("offers-search");
+  searchInputEl.addEventListener("input", function(){
+    activeSearch = normalize(searchInputEl.value);
+    renderOffers();
+  });
+
+  var activeBioOnly = false;
+  var bioFilterEl = document.getElementById("bio-filter");
+  bioFilterEl.addEventListener("click", function(){
+    activeBioOnly = !activeBioOnly;
+    bioFilterEl.setAttribute("aria-pressed", activeBioOnly ? "true" : "false");
+    updateFilterMeta();
+    renderOffers();
+  });
+
+  filterResetEl.addEventListener("click", function(){
+    activeStore = ""; activeCategory = ""; activeBioOnly = false;
+    storeFilterEl.querySelectorAll("button").forEach(function(b){
+      b.setAttribute("aria-pressed", b.dataset.store === "" ? "true" : "false");
+    });
+    categoryFilterEl.querySelectorAll("button").forEach(function(b){
+      b.setAttribute("aria-pressed", b.dataset.category === "" ? "true" : "false");
+    });
+    bioFilterEl.setAttribute("aria-pressed", "false");
+    updateFilterMeta();
+    renderOffers();
+  });
+
+  updateFilterMeta();
+
+  function matchesFilters(item){
+    if (activeCategory && categorizeProduct(item) !== activeCategory) return false;
+    if (activeSearch && normalize(item.product).indexOf(activeSearch) === -1) return false;
+    if (activeBioOnly && !isBioProduct(item)) return false;
+    return true;
+  }
+
+  function renderOffers(){
+    document.getElementById("updated-text").textContent = formatUpdated(state.offers.updatedAt);
+
+    var items = state.offers.items || [];
+
+    var seedBanner = document.getElementById("seed-banner");
+    if (seedBanner) seedBanner.hidden = items.length > 0 || typeof SEED_OFFERS === "undefined";
+
+    document.getElementById("hero-total").textContent = items.length;
+    var totalMatches = items.filter(offerMatches).length;
+    var heroWatchChip = document.getElementById("hero-watch-chip");
+    if (totalMatches > 0){
+      heroWatchChip.hidden = false;
+      document.getElementById("hero-watch-count").textContent = totalMatches;
+    } else {
+      heroWatchChip.hidden = true;
+    }
+
+    var visibleItems = items.filter(function(i){
+      return (!activeStore || i.store === activeStore) && matchesFilters(i);
+    });
+    var matchCount = visibleItems.filter(offerMatches).length;
+
+    var summaryParts = [];
+    summaryParts.push(visibleItems.length + (visibleItems.length === 1 ? " Angebot gefunden" : " Angebote gefunden"));
+    summaryParts.push(activeStore ? "bei " + STORE_LABEL[activeStore] : "über " + STORE_ORDER.length + " Märkte");
+    if (activeCategory) summaryParts.push("Kategorie: " + CATEGORY_LABEL[activeCategory]);
+    if (activeBioOnly) summaryParts.push("nur Bio");
+    if (activeSearch) summaryParts.push('Suche: "' + searchInputEl.value.trim() + '"');
+    document.getElementById("offers-summary").textContent = summaryParts.join(" · ");
+
+    var matchChip = document.getElementById("match-chip");
+    if (matchCount > 0){
+      matchChip.hidden = false;
+      matchChip.textContent = "🔔 " + matchCount + (matchCount === 1 ? " Treffer auf deiner Merkliste" : " Treffer auf deiner Merkliste");
+    } else {
+      matchChip.hidden = true;
+    }
+
+    var grid = document.getElementById("store-grid");
+    var visibleStores = activeStore ? [activeStore] : STORE_ORDER;
+    grid.innerHTML = visibleStores.map(function(store){
+      var storeItemsAll = items.filter(function(i){ return i.store === store; });
+      var storeItems = storeItemsAll.filter(matchesFilters);
+      var body;
+      if (storeItems.length){
+        body = CATEGORY_ORDER.map(function(cat){
+          var catItems = storeItems.filter(function(i){ return categorizeProduct(i) === cat; });
+          if (!catItems.length) return "";
+          return '<div class="category-group">' +
+            '<h3 class="category-heading">' + CATEGORY_LABEL[cat] + '<span class="category-count">' + catItems.length + '</span></h3>' +
+            '<div class="offer-list">' + catItems.map(function(item){ return offerCardHtml(item); }).join("") + '</div>' +
+          '</div>';
+        }).join("");
+      } else if (!storeItemsAll.length && store === "aldi" && state.offers.aldiNote){
+        body = '<div class="note">' + escapeHtml(state.offers.aldiNote) + '</div>';
+      } else if (!storeItemsAll.length){
+        body = '<div class="note">Für diesen Markt sind aktuell keine Angebote hinterlegt.</div>';
+      } else {
+        body = '<div class="note">Keine Angebote für die aktuelle Filterauswahl gefunden.</div>';
+      }
+      return '<div class="store-col">' +
+        '<h2><span class="store-dot" style="background:var(--store-' + store + ')"></span>' + STORE_LABEL[store] +
+        '<span class="store-count">' + storeItems.length + '</span></h2>' + body +
+        '</div>';
+    }).join("");
+  }
+
+  function validRangeText(item){
+    var from = (item.validFrom || "").trim();
+    var to = (item.validTo || "").trim();
+    if (from && to) return "Gültig " + escapeHtml(from) + " – " + escapeHtml(to);
+    if (to) return "Gültig bis " + escapeHtml(to);
+    if (from) return "Gültig ab " + escapeHtml(from);
+    return "";
+  }
+
+  function offerCardHtml(item){
+    var matched = offerMatches(item);
+    var validText = validRangeText(item);
+    var bio = isBioProduct(item);
+    return '<div class="offer-card">' +
+      (matched ? '<span class="match-badge" title="Treffer auf deiner Merkliste">🔔</span>' : '') +
+      '<div class="offer-top">' +
+        '<div><span class="store-tag"><span class="store-dot" style="background:var(--store-' + item.store + ')"></span>' + escapeHtml(STORE_LABEL[item.store] || item.store) +
+        (bio ? '<span class="bio-tag">🌱 Bio</span>' : '') + '</span>' +
+        '<div class="offer-name">' + escapeHtml(item.product) + '</div>' +
+        (item.unit ? '<div class="offer-unit">' + escapeHtml(item.unit) + '</div>' : '') + '</div>' +
+        (item.oldPrice ? '<span class="discount-tag">Reduziert</span>' : '') +
+      '</div>' +
+      '<div class="offer-price-row">' +
+        '<span class="offer-price mono">' + escapeHtml(item.price) + '</span>' +
+        (item.oldPrice ? '<span class="offer-price-old mono">' + escapeHtml(item.oldPrice) + '</span>' : '') +
+      '</div>' +
+      (validText ? '<div class="offer-valid">' + validText + '</div>' : '') +
+      '<div class="offer-actions">' +
+        '<button type="button" class="btn-watch' + (matched ? ' watching' : '') + '" data-watch-name="' + escapeHtml(item.product) + '"' + (matched ? ' disabled' : '') + '>' + (matched ? '🔔 Beobachtet' : '🔔 Beobachten') + '</button>' +
+        '<button type="button" class="btn-add" data-add-id="' + item.id + '">+ Zettel</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // ---------------- render: shopping list ----------------
+
+  function listRowHtml(it){
+    return '<div class="list-row' + (it.checked ? ' checked' : '') + '" data-id="' + it.id + '">' +
+      '<input type="checkbox" ' + (it.checked ? "checked" : "") + '>' +
+      '<span class="label">' + escapeHtml(it.name) + '</span>' +
+      '<button class="icon-btn" type="button" data-remove aria-label="Entfernen">✕</button>' +
+    '</div>';
+  }
+
+  function renderList(){
+    var items = state.shoppingList.items || [];
+    var wrap = document.getElementById("list-items");
+    if (!items.length){
+      wrap.innerHTML = '<div class="empty-state">Dein Einkaufszettel ist leer. Trag oben ein, was noch fehlt.</div>';
+      document.getElementById("list-footer").hidden = true;
+      return;
+    }
+    wrap.innerHTML = CATEGORY_ORDER.map(function(cat){
+      var catItems = items.filter(function(it){ return categorizeProduct({product: it.name}) === cat; });
+      if (!catItems.length) return "";
+      return '<div class="category-group">' +
+        '<h3 class="category-heading">' + CATEGORY_LABEL[cat] + '<span class="category-count">' + catItems.length + '</span></h3>' +
+        '<div>' + catItems.map(listRowHtml).join("") + '</div>' +
+      '</div>';
+    }).join("");
+    var done = items.filter(function(i){ return i.checked; }).length;
+    var footer = document.getElementById("list-footer");
+    footer.hidden = false;
+    document.getElementById("list-progress").textContent = done + " von " + items.length + " erledigt";
+  }
+
+  document.getElementById("list-items").addEventListener("click", function(e){
+    var row = e.target.closest(".list-row");
+    if (!row) return;
+    var id = row.dataset.id;
+    if (e.target.matches('[data-remove]')){
+      setItems("shoppingList", state.shoppingList.items.filter(function(i){ return i.id !== id; }));
+      persistList();
+    } else if (e.target.matches('input[type="checkbox"]')){
+      setItems("shoppingList", state.shoppingList.items.map(function(i){
+        return i.id === id ? Object.assign({}, i, {checked: e.target.checked}) : i;
+      }));
+      persistList();
+    }
+  });
+
+  function addListItem(){
+    var input = document.getElementById("list-input");
+    var name = input.value.trim();
+    if (!name) return;
+    try {
+      setItems("shoppingList", (state.shoppingList.items || []).concat([{id: uid(), name: name, checked:false, addedAt: new Date().toISOString()}]));
+      input.value = "";
+      persistList();
+    } catch (err) {
+      showDebugError("Zettel hinzufügen: " + (err && err.message ? err.message : err));
+      renderList();
+    }
+  }
+  // Bewusst ein normaler Button + Click-Handler statt form-"submit": in manchen eingebetteten
+  // mobilen Ansichten (z. B. der Claude-App-Vorschau) reagiert das native Form-Submit-Event
+  // nicht zuverlässig auf Taps. preventDefault() auf "submit" bleibt als Sicherheitsnetz.
+  document.getElementById("list-submit").addEventListener("click", addListItem);
+  document.getElementById("list-input").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); addListItem(); }
+  });
+  document.getElementById("list-form").addEventListener("submit", function(e){ e.preventDefault(); });
+
+  document.getElementById("clear-checked").addEventListener("click", function(){
+    setItems("shoppingList", (state.shoppingList.items || []).filter(function(i){ return !i.checked; }));
+    persistList();
+  });
+
+  // ---------------- render: watchlist ----------------
+
+  function watchHitHtml(o){
+    var validText = validRangeText(o);
+    var bio = isBioProduct(o);
+    return '<div class="watch-hit">' +
+      '<span class="store-tag"><span class="store-dot" style="background:var(--store-' + o.store + ')"></span>' + escapeHtml(STORE_LABEL[o.store] || o.store) + '</span>' +
+      (bio ? '<span class="bio-tag">🌱 Bio</span>' : '') +
+      '<span class="watch-hit-name">' + escapeHtml(o.product) + (o.unit ? ' <span class="watch-hit-unit">' + escapeHtml(o.unit) + '</span>' : '') + '</span>' +
+      (o.oldPrice ? '<span class="watch-hit-old mono">' + escapeHtml(o.oldPrice) + '</span>' : '') +
+      '<span class="watch-hit-price mono">' + escapeHtml(o.price) + '</span>' +
+      (validText ? '<span class="watch-hit-valid">' + validText + '</span>' : '') +
+    '</div>';
+  }
+
+  function renderWatch(){
+    var items = state.watchlist.items || [];
+    var wrap = document.getElementById("watch-items");
+    if (!items.length){
+      wrap.innerHTML = '<div class="empty-state">Noch keine beobachteten Produkte. Trag oben ein Produkt ein, z. B. „Hackfleisch“ oder „Kaffee“.</div>';
+      return;
+    }
+    var offers = state.offers.items || [];
+    wrap.innerHTML = items.map(function(w){
+      var hits = offers.filter(function(o){ return textMatches(w.name, o.product); });
+      var status = hits.length
+        ? '<div class="watch-hits">' + hits.map(watchHitHtml).join("") + '</div>'
+        : '<span class="watch-status miss">Aktuell kein Angebot</span>';
+      return '<div class="watch-row" data-id="' + w.id + '">' +
+        '<div class="watch-row-head">' +
+          '<div class="watch-main"><div class="watch-name">' + escapeHtml(w.name) +
+          (hits.length ? ' <span class="watch-hit-count">(' + hits.length + (hits.length === 1 ? " Treffer" : " Treffer") + ')</span>' : '') + '</div>' +
+          (w.note ? '<div class="watch-note">' + escapeHtml(w.note) + '</div>' : '') + '</div>' +
+          '<button class="icon-btn" type="button" data-remove aria-label="Entfernen">✕</button>' +
+        '</div>' +
+        status +
+      '</div>';
+    }).join("");
+  }
+
+  document.getElementById("watch-items").addEventListener("click", function(e){
+    if (!e.target.matches('[data-remove]')) return;
+    var row = e.target.closest(".watch-row");
+    var id = row.dataset.id;
+    setItems("watchlist", state.watchlist.items.filter(function(i){ return i.id !== id; }));
+    persistWatch();
+  });
+
+  function addWatchItem(){
+    var nameInput = document.getElementById("watch-input");
+    var noteInput = document.getElementById("watch-note-input");
+    var name = nameInput.value.trim();
+    if (!name) return;
+    try {
+      setItems("watchlist", (state.watchlist.items || []).concat([{id: uid(), name: name, note: noteInput.value.trim(), addedAt: new Date().toISOString()}]));
+      nameInput.value = ""; noteInput.value = "";
+      persistWatch();
+    } catch (err) {
+      showDebugError("Beobachten hinzufügen: " + (err && err.message ? err.message : err));
+      renderWatch();
+    }
+  }
+  document.getElementById("watch-submit").addEventListener("click", addWatchItem);
+  document.getElementById("watch-input").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); addWatchItem(); }
+  });
+  document.getElementById("watch-note-input").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); addWatchItem(); }
+  });
+  document.getElementById("watch-form").addEventListener("submit", function(e){ e.preventDefault(); });
+
+  // ---------------- render all ----------------
+
+  function render(){
+    renderOffers();
+    renderList();
+    renderWatch();
+  }
+
+  render();
+
+  // ---------------- db wiring (Firebase Firestore + Auth) ----------------
+
+  var dbWiringStarted = false;
+  function startDbWiring(){
+    if (dbWiringStarted) return;
+    dbWiringStarted = true;
+    db = firebase.firestore();
+    refs.offers = db.collection("state").doc("offers");
+    refs.list = db.collection("state").doc("shopping_list");
+    refs.watch = db.collection("state").doc("watchlist");
+
+    refs.offers.onSnapshot(function(snap){
+      var data = (snap.exists && snap.data()) || {items: [], updatedAt: null, source: null, aldiNote: null};
+      state.offers = data.items ? data : Object.assign({}, data, {items: []});
+      render();
+    }, function(err){ showDebugError("Angebote konnten nicht geladen werden: " + (err && err.message ? err.message : err)); });
+
+    refs.list.onSnapshot(function(snap){
+      var data = (snap.exists && snap.data()) || {items: []};
+      state.shoppingList = data.items ? data : Object.assign({}, data, {items: []});
+      renderList();
+    }, function(err){ showDebugError("Zettel konnte nicht geladen werden: " + (err && err.message ? err.message : err)); });
+
+    refs.watch.onSnapshot(function(snap){
+      var data = (snap.exists && snap.data()) || {items: []};
+      state.watchlist = data.items ? data : Object.assign({}, data, {items: []});
+      renderWatch(); renderOffers();
+    }, function(err){ showDebugError("Merkliste konnte nicht geladen werden: " + (err && err.message ? err.message : err)); });
+
+    var seedLoadBtn = document.getElementById("seed-load-btn");
+    if (seedLoadBtn){
+      seedLoadBtn.addEventListener("click", function(){
+        if (typeof SEED_OFFERS === "undefined") return;
+        seedLoadBtn.disabled = true;
+        refs.offers.set({
+          items: SEED_OFFERS.items,
+          updatedAt: SEED_OFFERS.updatedAt,
+          source: SEED_OFFERS.source,
+          aldiNote: null
+        }).catch(function(err){
+          showDebugError("Angebote laden fehlgeschlagen: " + (err && err.message ? err.message : err));
+        }).finally(function(){ seedLoadBtn.disabled = false; });
+      });
+    }
+  }
+
+  if (!isFirebaseConfigured()){
+    showSetupPanel();
+  } else if (window.firebase && typeof firebase.initializeApp === "function"){
+    try {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      initAuthUI();
+      completeLoginFromLinkIfNeeded();
+      firebase.auth().onAuthStateChanged(function(user){
+        if (user && isAllowedEmail(user.email)){
+          loginPanelEl.hidden = true;
+          appShellEl.hidden = false;
+          startDbWiring();
+        } else if (user && !isAllowedEmail(user.email)){
+          // Angemeldet, aber nicht auf der Freigabe-Liste — sofort wieder abmelden.
+          firebase.auth().signOut().catch(function(){});
+          showLoginStatus("Diese E-Mail-Adresse hat keinen Zugriff auf diese Liste.");
+          loginPanelEl.hidden = false;
+          appShellEl.hidden = true;
+        } else {
+          appShellEl.hidden = true;
+          loginPanelEl.hidden = false;
+        }
+      });
+    } catch (err) {
+      showDebugError("Firebase-Initialisierung fehlgeschlagen: " + (err && err.message ? err.message : err));
+      showSetupPanel();
+    }
+  } else {
+    showDebugError("Die Firebase-Bibliothek konnte nicht geladen werden — bitte Internetverbindung prüfen und die Seite neu laden.");
+  }
+
+})();
+</script>
+</body>
+</html>

@@ -492,6 +492,16 @@
   @media (max-width:380px){
     .store-grid{grid-template-columns:1fr;}
   }
+  /* ---------- header full-width on laptop/desktop ---------- */
+  @media (min-width:900px){
+    .hero{max-width:none; margin:0; padding:0;}
+    .hero-card{border-radius:0; padding:34px 0 76px;}
+    .hero-inner{max-width:1040px; margin:0 auto; padding:0 20px;}
+    .theme-toggle{top:24px; right:20px;}
+  }
+  @media (min-width:1041px){
+    .theme-toggle{right:calc(50% - 500px);}
+  }
   #debug-banner{
     position:fixed; left:0; right:0; bottom:0; z-index:99999;
     background:#b00020; color:#fff; font:11px/1.5 var(--mono, monospace);
@@ -733,7 +743,8 @@ service cloud.firestore {
   // beliebigen E-Mail-Adresse trotzdem lesen/schreiben.
   var ALLOWED_EMAILS = [
     "marco.alber@icloud.com",
-    "m.alber95@gmail.com"
+    "m.alber95@gmail.com",
+    "sabi.knauf@web.de"
     // weitere Adresse ergänzen, z. B. "monika@beispiel.de"
   ];
   function isFirebaseConfigured(){

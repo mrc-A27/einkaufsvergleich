@@ -1531,6 +1531,11 @@ service cloud.firestore {
   } else if (window.firebase && typeof firebase.initializeApp === "function"){
     try {
       firebase.initializeApp(FIREBASE_CONFIG);
+      // Anmeldung dauerhaft im Browser merken (überlebt Schließen des Tabs/Browsers),
+      // damit man nicht bei jedem Öffnen erneut den Anmelde-Link braucht.
+      try {
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){});
+      } catch (e) {}
       initAuthUI();
       completeLoginFromLinkIfNeeded();
       firebase.auth().onAuthStateChanged(function(user){
